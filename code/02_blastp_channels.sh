@@ -17,9 +17,9 @@ for database in *_prot.pin; do
     species=$(basename "$database" _prot.pin)
 
     blastp \
-    -query "../sensing_protein_seqs.fasta" \
+    -query "../calcium_membrane_transport/sensing_protein_seqs.fasta" \
     -db ${species}_prot \
-    -out "../annotation/${species}_channels_BLAST_out.tab" \
+    -out "../calcium_membrane_transport/${species}_channels_BLAST_out.tab" \
     -evalue 1E-05 \
     -num_threads 48 \
     -max_target_seqs 1 \
