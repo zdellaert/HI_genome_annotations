@@ -1,0 +1,94 @@
+Loading apptainer version latest
+INFO:    Using cached SIF image
+Using motif +MA0486.1 of width 15.
+Using motif -MA0486.1 of width 15.
+Finding best site passing the output threshold in each of the 54346 sequences.
+Found a best site in 5901 sequences.
+Computing q-values.
+# Computing q-values.
+#   Estimating pi_0 from a uniformly sampled set of 10000 p-values.
+#   Estimating pi_0.
+# Minimal pi_zero = 0.999091
+#   Estimated pi_0=0.999799
+Using motif +MA0150.1 of width 11.
+Using motif -MA0150.1 of width 11.
+Finding best site passing the output threshold in each of the 54346 sequences.
+Found a best site in 4817 sequences.
+Computing q-values.
+# Computing q-values.
+#   Estimating pi_0 from a uniformly sampled set of 10000 p-values.
+#   Estimating pi_0.
+# Minimal pi_zero = 0.983462
+#   Estimated pi_0=1
+Using motif +MA0157.2 of width 8.
+Using motif -MA0157.2 of width 8.
+Finding best site passing the output threshold in each of the 54346 sequences.
+Found a best site in 8264 sequences.
+Computing q-values.
+# Computing q-values.
+#   Estimating pi_0 from a uniformly sampled set of 10000 p-values.
+#   Estimating pi_0.
+# Minimal pi_zero = 0.976333
+#   Estimated pi_0=0.982333
+INFO:    Using cached SIF image
+Using motif +MA0486.1 of width 15.
+Using motif -MA0486.1 of width 15.
+Finding best site passing the output threshold in each of the 33706 sequences.
+Found a best site in 3636 sequences.
+Computing q-values.
+# Computing q-values.
+#   Estimating pi_0 from a uniformly sampled set of 10000 p-values.
+#   Estimating pi_0.
+# Minimal pi_zero = 1
+#   Estimated pi_0=1
+Using motif +MA0150.1 of width 11.
+Using motif -MA0150.1 of width 11.
+Finding best site passing the output threshold in each of the 33706 sequences.
+Found a best site in 2774 sequences.
+Computing q-values.
+# Computing q-values.
+#   Estimating pi_0 from a uniformly sampled set of 10000 p-values.
+#   Estimating pi_0.
+# Minimal pi_zero = 1.0004
+#   Estimated pi_0=1
+Using motif +MA0157.2 of width 8.
+Using motif -MA0157.2 of width 8.
+Finding best site passing the output threshold in each of the 33706 sequences.
+Found a best site in 5573 sequences.
+Computing q-values.
+# Computing q-values.
+#   Estimating pi_0 from a uniformly sampled set of 10000 p-values.
+#   Estimating pi_0.
+# Minimal pi_zero = 0.969548
+#   Estimated pi_0=0.976284
+INFO:    Using cached SIF image
+Using motif +MA0486.1 of width 15.
+Using motif -MA0486.1 of width 15.
+Finding best site passing the output threshold in each of the 44113 sequences.
+Found a best site in 4836 sequences.
+Computing q-values.
+# Computing q-values.
+#   Estimating pi_0 from a uniformly sampled set of 10000 p-values.
+#   Estimating pi_0.
+# Minimal pi_zero = 1.0008
+#   Estimated pi_0=1
+Using motif +MA0150.1 of width 11.
+Using motif -MA0150.1 of width 11.
+Finding best site passing the output threshold in each of the 44113 sequences.
+Found a best site in 3852 sequences.
+Computing q-values.
+# Computing q-values.
+#   Estimating pi_0 from a uniformly sampled set of 10000 p-values.
+#   Estimating pi_0.
+# Minimal pi_zero = 1.0006
+#   Estimated pi_0=1
+Using motif +MA0157.2 of width 8.
+Using motif -MA0157.2 of width 8.
+Finding best site passing the output threshold in each of the 44113 sequences.
+Found a best site in 6938 sequences.
+Computing q-values.
+# Computing q-values.
+#   Estimating pi_0 from a uniformly sampled set of 10000 p-values.
+#   Estimating pi_0.
+# Minimal pi_zero = 0.956667
+#   Estimated pi_0=0.968485
