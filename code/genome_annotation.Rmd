@@ -616,7 +616,7 @@ for (genome_fasta in fastas){
 
 Cleves lab new April 2026 preprint: "The 500 bp upstream of each gene in the genomes was identified with a script from ref. 66 and used as input for FIMO analysis 67 using default settings to identify the canonical HSF1 binding motif (ID: MA0486 in the JASPAR database 68) as in ref. 66 (Figure 2G). Frequency of putative HSF1 binding motifs was then quantified per gene for further analysis."
 
-wget "https://jaspar.elixir.no/api/v1/matrix/MA0486.1.meme"
+1. Swinhoe N, Tinoco AI, Sarfati DN, Henderson CF, Kowalewski GP, Meier EK, et al. CRISPR/Cas9-mutagenesis reveals that varying dependence on HSF1 is associated with differences in coral heat tolerance. bioRxiv; 2026. p. 2026.04.01.714264. doi:10.64898/2026.04.01.714264
 
 ```{bash, eval=FALSE}
 #Download motif files or entire motif databases
