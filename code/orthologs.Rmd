@@ -186,10 +186,7 @@ python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -phylogenies 'ml' -ext
 ### Step 3. Load in results from ortholog analyses
 
 ```{r}
-# broc_pairs <- data.table::fread("../references/cnidarian_orthologs/broccoli/dir_step4/orthologous_pairs.txt", header=F)
-# colnames(broc_pairs) <- c("Gene_spA","Gene_spB")
-
-broc_pairs <- data.table::fread("../../snRNA_analysis/multi-sp-snRNA/reference_genes/cnidarian_marker_genes/output/broccoli/dir_step4/orthologous_pairs.txt", header=F)
+broc_pairs <- data.table::fread("../references/cnidarian_orthologs/broccoli/dir_step4/orthologous_pairs.txt", header=F)
 colnames(broc_pairs) <- c("Gene_spA","Gene_spB")
 ```
 
@@ -312,3 +309,246 @@ write.csv(broc_pairs_3sp,
           "../annotation/ortholog_pairwise_relationships.csv", 
           row.names = FALSE)
 ```
+
+<!-- ### Biomineralization Toolkit -->
+
+<!-- Biomineralization Toolkit gene list from [Scucchia et al. 2021](https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.15812). -->
+
+<!-- #### Biomineralization list based on BLAST analysis -->
+
+<!-- - reformatted fasta file provided by F. Scucchia so that each header began on a new line, so that each sequence is on one single line, and to remove duplicate genes or genes not in the accompanying excel file. -->
+<!-- - There are 172 genes in the "toolkit"  -->
+
+<!-- ```{bash eval=FALSE} -->
+<!-- #request interactive computing node -->
+<!-- salloc -p cpu -c 8 --mem 32G -->
+
+<!-- #load BLAST module -->
+<!-- module load uri/main -->
+<!-- module load BLAST+/2.15.0-gompi-2023a -->
+<!-- cd input_list/biomineralization -->
+
+<!-- # run blast with tabular output -->
+<!-- blastp -query Biomineralization_Toolkit_FScucchia_ZDrefmt.fasta -db ../../../references/blast_dbs/Pacuta_prot -out Biomineralization_blast_results_tab.txt -outfmt 6 -evalue 0.01 -max_target_seqs 1 -->
+<!-- ``` -->
+
+<!-- Now, will take the best Pacuta alignment for each Biomineralization Gene and match to the name of that gene -->
+
+<!-- ```{r} -->
+<!-- Biomin_genes <- read_xlsx("input_lists/biomineralization/Biomineralization_Toolkit_FScucchia.xlsx") %>% select(-`blasted protein in Stylophora`) -->
+<!-- Biomin_blast_results <- read.delim("input_lists/biomineralization/Biomineralization_blast_results_tab.txt", header=FALSE)  -->
+<!-- Biomin_blast_results <- Biomin_blast_results %>% filter(V11 < 0.01) %>% select(V1, V2) %>% distinct() -->
+
+<!-- # Merge data frames based on accessionnumber/geneID -->
+<!-- merged_data <- Biomin_genes %>% -->
+<!--   inner_join(Biomin_blast_results, by = c("accessionnumber/geneID" = "V1")) %>% dplyr::rename("Pocillopora_acuta_best_hit" = "V2") %>% mutate(List="Biomin_Genes") -->
+
+<!-- write.csv(merged_data, "genes_of_interest/Pacuta_Biomin_Blast.csv", row.names = F) -->
+<!-- ``` -->
+
+<!-- #### Biomineralization list based on ortholog analysis -->
+
+<!-- ```{r} -->
+<!-- Biomin_Spis <- read_xlsx("input_lists/biomineralization/Biomineralization_Toolkit_FScucchia.xlsx")  %>% clean_names() -->
+
+<!-- Biomin_Spis <- Biomin_Spis %>%  separate_longer_delim(blasted_protein_in_stylophora, delim=",") %>%  -->
+<!--       mutate(blasted_protein_in_stylophora=str_squish(blasted_protein_in_stylophora))  -->
+<!-- length(unique(Biomin_Spis$blasted_protein_in_stylophora)) -->
+
+<!-- Biomin_broc <- Biomin_Spis %>%  -->
+<!--     left_join(broc_pairs_clean, by = c("blasted_protein_in_stylophora"="Gene_spA")) %>% -->
+<!--     bind_rows( -->
+<!--       Biomin_Spis %>% left_join(broc_pairs_clean, by = c("blasted_protein_in_stylophora"="Gene_spB")) %>% -->
+<!--         dplyr::rename(Gene_spB = Gene_spA)) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- broc_groups <- data.table::fread("cnidarian_marker_genes/output/broccoli/dir_step3/table_OGs_protein_names.txt", header=T) -->
+
+<!-- broc_groups_Spis <- broc_groups %>% select(c(`#OG_name`,Spis_proteins.faa))  %>% filter(Spis_proteins.faa != "") %>% dplyr::rename(OG_name = "#OG_name") -->
+<!-- broc_groups_Spis_sep <- broc_groups_Spis %>% separate_longer_delim(cols = Spis_proteins.faa, delim = " ") -->
+<!-- broc_groups_Spis_sep <- broc_groups_Spis_sep %>% dplyr::rename(query = Spis_proteins.faa) -->
+
+<!-- broc_groups_Pacu <- broc_groups %>% select(c(`#OG_name`,Pacu_proteins.faa))  %>% filter(Pacu_proteins.faa != "") %>% dplyr::rename(OG_name = "#OG_name") -->
+<!-- broc_groups_Pacu_sep <- broc_groups_Pacu %>% separate_longer_delim(cols = Pacu_proteins.faa, delim = " ") -->
+<!-- broc_groups_Pacu_sep <- broc_groups_Pacu_sep %>% dplyr::rename(query = Pacu_proteins.faa) -->
+
+<!-- Biomin_broc_groups <- Biomin_Spis %>%  -->
+<!--     left_join(broc_groups_Spis_sep, by = c("blasted_protein_in_stylophora"="query")) -->
+
+<!-- Biomin_broc_groups_Pacu <- Biomin_broc_groups %>%  -->
+<!--     left_join(broc_groups_Pacu_sep, by = "OG_name") -->
+
+<!-- Biomin_broc_Pacuta <- Biomin_broc_groups_Pacu %>% filter(grepl("acuta",query)) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes") -->
+
+<!-- write.csv(Biomin_broc_Pacuta, file="genes_of_interest/Pacuta_Biomin_Spis_orthogroups.csv") -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- name <- "Spis" -->
+
+<!-- print(paste0(name," number of unique gene ids in gene of interest list:")) -->
+<!-- print(length(unique(Biomin_Spis$blasted_protein_in_stylophora))) -->
+
+<!-- print(paste0(name," matches of gene id to broccoli protein names:")) -->
+<!-- print(length(unique(union(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spA),intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spB))))) -->
+
+<!-- print(paste0(name," matches of gene id to *unclassified* broccoli protein names:")) -->
+<!-- print(length(unique(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_unclassified$V1)))) -->
+
+<!-- print(paste0(name," unnacounted for (in broc groups only?):")) -->
+<!-- length(unique(Biomin_Spis$blasted_protein_in_stylophora)) - -->
+<!--   (length(unique(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_unclassified$V1))) + length(unique(union(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spA),intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spB))))) -->
+
+<!-- setdiff(unique(Biomin_Spis$blasted_protein_in_stylophora), -->
+<!--         union( -->
+<!--           unique(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_unclassified$V1)), -->
+<!--           unique(union(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spA), -->
+<!--                        intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spB))))) -->
+
+<!-- # one protein that has actually been removed from the Spis genome on ncbi due to contamination: XP_022803894.1 -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- Biomin_broc_Pacuta_temp <- Biomin_broc %>% filter(grepl("acuta",Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB) -->
+
+<!-- length(unique(Biomin_broc_Pacuta_temp$blasted_protein_in_stylophora)) -->
+<!-- #98 of the 119 proteins with broccoli orthologs had Pacuta orthologs -->
+
+<!-- # which ones did not: -->
+
+<!-- Biomin_Spis %>% filter(blasted_protein_in_stylophora %in% setdiff(unique(Biomin_Spis$blasted_protein_in_stylophora),unique(Biomin_broc_Pacuta_temp$blasted_protein_in_stylophora))) -->
+
+<!-- Biomin_Spis %>% filter(blasted_protein_in_stylophora %in% setdiff(unique(Biomin_Spis$blasted_protein_in_stylophora),unique(Biomin_broc_Pacuta_temp$blasted_protein_in_stylophora))) %>% pull(definition) %>% unique() -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- Biomin_broc_Pacuta <- Biomin_broc %>% filter(grepl("acuta",Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes") -->
+
+<!-- write.csv(Biomin_broc_Pacuta, file="genes_of_interest/Pacuta_Biomin_Spis_ortholog.csv") -->
+
+<!-- Biomin_broc_Pdam<- Biomin_broc %>% filter(grepl("XP_027",Gene_spB)) %>% dplyr::rename(Pdam_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes") -->
+
+<!-- write.csv(Biomin_broc_Pdam, file="genes_of_interest/Pdam_Biomin_Spis_ortholog.csv") -->
+
+<!-- Biomin_broc_Pcomp <- Biomin_broc %>% filter(grepl("compressa",Gene_spB)) %>% dplyr::rename(Pcomp_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() -->
+
+<!-- write.csv(Biomin_broc_Pcomp, file="genes_of_interest/Pcomp_Biomin_Spis_ortholog.csv") -->
+
+<!-- Biomin_broc_Mcap <- Biomin_broc %>% filter(grepl("capitata",Gene_spB)) %>% dplyr::rename(Mcap_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() -->
+
+<!-- write.csv(Biomin_broc_Mcap, file="genes_of_interest/Mcap_Biomin_Spis_ortholog.csv") -->
+<!-- ``` -->
+
+<!-- ### Heat Stress Genes -->
+
+<!-- ```{r} -->
+<!-- # load in manually curated list of genes of interest -->
+<!-- stress_genes_man <- read.csv("input_lists/HeatStressGenes.csv", header = TRUE) -->
+
+<!-- NEED_TO_FIND_GENE_ID <- stress_genes_man %>% filter(is.na(species_gene_ID)) -->
+<!-- print(NEED_TO_FIND_GENE_ID) -->
+
+<!-- stress_genes_man <- stress_genes_man %>% filter(!is.na(species_gene_ID)) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- stress_genes <- stress_genes_man %>% separate_rows(species_gene_ID,sep =";") %>% filter(!is.na(species_gene_ID)) -->
+
+<!-- unique(stress_genes$species) -->
+
+<!-- ## clean gene IDs for Spis, only need to add .1 to the end of all the species_gene_ID - this is the format of the broc IDs -->
+<!-- stress_genes_Spis <- stress_genes %>% filter(species=="Spis")  %>%  -->
+<!--   mutate(protein_id = paste0(species_gene_ID,".1"))  -->
+
+<!-- ## make protein_id column for the Edia + Pdam genes, which already have their IDs in the right format -->
+<!-- stress_genes_Pdam <- stress_genes %>% filter(species=="Pdam") %>%  -->
+<!--   mutate(protein_id = species_gene_ID) -->
+
+<!-- stress_genes_Edia <- stress_genes %>% filter(species=="Edia")  %>%  -->
+<!--   mutate(protein_id = species_gene_ID)  -->
+
+<!-- ## combine and merge with broccoli orthologs -->
+<!-- stress_genes_final <- rbind(stress_genes_Pdam,stress_genes_Spis,stress_genes_Edia) -->
+
+<!-- stress_broc <- stress_genes_final %>%  -->
+<!--     left_join(broc_pairs_clean, by = c("protein_id"="Gene_spA")) %>% -->
+<!--     bind_rows( -->
+<!--       stress_genes_final %>% left_join(broc_pairs_clean, by = c("protein_id"="Gene_spB")) %>% -->
+<!--         dplyr::rename(Gene_spB = Gene_spA)) -->
+<!-- ``` -->
+
+<!-- Species-specific lists for species: -->
+
+<!-- ```{r} -->
+<!-- # Pocillopora acuta -->
+<!-- stress_broc_Pacuta <- stress_broc %>% filter(grepl("acuta",Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB) %>% -->
+<!--   select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity -->
+<!--   distinct() %>% mutate(List="HeatStressGenes") -->
+<!-- # Porites compressa  -->
+<!-- stress_broc_Pcomp <- stress_broc %>% filter(grepl("compressa",Gene_spB)) %>% dplyr::rename(Pcomp_gene=Gene_spB) %>% -->
+<!--   select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity -->
+<!--   distinct() %>% mutate(List="HeatStressGenes") -->
+<!-- # Montipora capitata -->
+<!-- stress_broc_Mcap <- stress_broc %>% filter(grepl("capitata",Gene_spB)) %>% dplyr::rename(Mcap_gene=Gene_spB) %>% -->
+<!--   select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity -->
+<!--   distinct() %>% mutate(List="HeatStressGenes") -->
+<!-- # Orbicella faveolata -->
+<!-- stress_broc_Ofav <- stress_broc %>% filter(grepl("QW917",Gene_spB)) %>% dplyr::rename(Ofav_gene=Gene_spB) %>% -->
+<!--   select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity -->
+<!--   distinct() %>% mutate(List="HeatStressGenes") -->
+
+<!-- write.csv(stress_broc_Pacuta, file="genes_of_interest/HeatStressGenes_Pacuta.csv") -->
+<!-- write.csv(stress_broc_Pcomp, file="genes_of_interest/HeatStressGenes_Pcomp.csv") -->
+<!-- write.csv(stress_broc_Mcap, file="genes_of_interest/HeatStressGenes_Mcap.csv") -->
+<!-- write.csv(stress_broc_Ofav, file="genes_of_interest/HeatStressGenes_Ofav.csv") -->
+<!-- ``` -->
+
+<!-- What are we missing? -->
+<!-- ```{r} -->
+<!-- NEED_TO_FIND_GENE_ID$gene_id -->
+
+<!-- stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Pacuta$gene_id] -->
+<!-- stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Pcomp$gene_id] -->
+<!-- stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Mcap$gene_id] -->
+<!-- stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Ofav$gene_id] -->
+
+<!-- stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Pacuta$gene_id,] -->
+<!-- stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Pcomp$gene_id,] -->
+<!-- stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Mcap$gene_id,] -->
+<!-- stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Ofav$gene_id,] -->
+<!-- ``` -->
+
+<!-- ## Appendix: Program installations -->
+
+<!-- ### Install Broccoli on unity -->
+
+<!-- Set up conda environments and install program -->
+
+<!-- ```{bash, eval=FALSE} -->
+<!-- # enter interactive session -->
+<!-- salloc -->
+
+<!-- # load conda -->
+<!-- module load conda/latest -->
+
+<!-- # create and activate environment -->
+<!-- conda create --prefix /work/pi_hputnam_uri_edu/conda/envs/env-broccoli python=3.8 ete3 -->
+<!-- conda activate /work/pi_hputnam_uri_edu/conda/envs/env-broccoli -->
+
+<!-- # clone broccoli repo into environment -->
+<!-- cd /work/pi_hputnam_uri_edu/conda/envs/env-broccoli -->
+<!-- git clone https://github.com/rderelle/Broccoli.git -->
+<!-- cd Broccoli -->
+
+<!-- # check that the install is sucessful by running the help command -->
+<!-- python broccoli.py -help -->
+
+<!-- # Make a symlink (shortcut) to home directory -->
+<!-- ln -s /work/pi_hputnam_uri_edu/conda/envs/env-broccoli/Broccoli/broccoli.py ~/broccoli.py -->
+
+<!-- # now it can run in any directory via -->
+<!-- python ~/broccoli.py -help -->
+<!-- ``` -->
