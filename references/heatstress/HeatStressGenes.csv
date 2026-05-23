@@ -1,0 +1,67 @@
+response_type,category,gene_id,gene_name,species,species_gene_ID,key_timepoint_upregulation,key_timepoint_downregulation,timepoint_notes,ref_first_author,reference
+Type1,UPR,HSF1,heat shock factor 1,Pdam,XP_027052222.1;XP_027052223.1;XP_027052224.1,1hr,NA,NA,Majerova,10.1111/mec.15988
+Type1,UPR,HSP70,heat shock protein 70,Pdam,XP_027037242.1,3hr,NA,NA,Majerova,10.1111/mec.15988
+Type1,Apoptosis,BAK,Bcl2 Antagonist/Killer,Pdam,XP_027045703.1,3hr,NA,NA,Majerova,10.1111/mec.15988
+Type1,Apoptosis,BAX,Bcl2 Associated X,Pdam,XP_027041455.1,3hr,NA,NA,Majerova,10.1111/mec.15988
+Type1,Apoptosis,Bcl-2,B-cell lymphoma 2,Pdam,XP_027052585.1;XP_027045685.1;XP_027045686.1;XP_027048109.1,3hr,NA,NA,Majerova,10.1111/mec.15988
+Type1,Apoptosis,BI-1,Bax-inhibitor 1,Pdam,XP_027045208.1,3hr,NA,NA,Majerova,10.1111/mec.15988
+Type1,ROS response,GR,Glutathione reductase,Pdam,XP_027052430.1,3hr,NA,NA,Majerova,10.3389/fmars.2022.971332
+Type1,Innate immunity,NF-KB,NF-kappa B,Pdam,XP_027038010.1,3hr,NA,NA,Majerova,10.3389/fmars.2022.971332
+Type1,ROS response,HO-1,Heme oxygenase 1,Pdam,XP_027042110.1,NA,NA,NA,Majerova,10.1038/s42003-025-08671-y
+Type1,ROS response,AMPK,AMP-activated protein kinase,Pdam,XP_027046732.1;XP_027046733.1;XP_027046734.1,NA,NA,NA,Majerova,10.1038/s42003-025-08671-y
+Type1,ROS response,Foxo3,forkhead box O3,Pdam,XP_027038116.1,NA,NA,NA,Majerova,10.1038/s42003-025-08671-y
+Type1,ROS response,OGG1,8-oxoguanine DNA glycosylase,Pdam,XP_027048124.1,NA,NA,NA,Majerova,10.1038/s42003-025-08671-y
+Type1,Apoptosis,Cas3,Caspase 3,Pdam,XP_027055203.1,NA,NA,NA,Majerova,10.1038/s42003-025-08671-y
+Type1,ROS response,Nrf2,Nuclear factor erythroid 2-related factor 2,Pdam,XP_027060548.1,NA,NA,NA,Majerova,10.1038/s42003-025-08671-y
+Type1,Apoptosis,mTOR,mTOR,Pdam,XP_027052994.1,NA,NA,NA,Majerova,10.1038/s42003-025-08671-y
+Type1,Innate immunity,NF-KB,NF-KB,Ahya,NA,2.5hr,NA,NA,Traylor Knowles,10.1086/692717
+Type1,UPR,HSP70,HSP70,Ahya,NA,1hr,NA,NA,Traylor Knowles,10.1086/692717
+Type1,Innate immunity,AP-1,Transcription factor AP-1,Ahya,NA,3hr,NA,NA,Traylor Knowles,10.1086/692717
+Type1,Stress transcription factors,Elk-3,ETS domain-containing protein Elk-3,Ahya,NA,4hr,NA,NA,Traylor Knowles,10.1086/692717
+Type1,Stress transcription factors,FosB,FosB,Ahya,NA,4hr,NA,NA,Traylor Knowles,10.1086/692717
+Type1,ROS response,CAT,Catalase,Pdam,XP_027047137.1;XP_027047049.1,NA,NA,NA,NA,NA
+Type1,ROS response,SOD,Superoxide dismutase,Pdam,XP_027056263.1;XP_027056265.1;XP_027056266.1;XP_027049096.1;XP_027049101.1,NA,NA,NA,NA,NA
+Type1,Apoptosis,Casp,Caspase,Spis,XP_022784458,6hr,NA,1st timepoint after T0,Kvitt,10.1038/srep30359
+Type1,Apoptosis,Bcl-2,B-cell lymphoma 2,Spis,XP_022804711,6hr,NA,1st timepoint after T0,Kvitt,10.1038/srep30359
+Type1,Apoptosis,BAX,Bcl2 Associated X,Spis,XP_022785719,6hr,NA,1st timepoint after T0,Kvitt,10.1038/srep30359
+Type1,Apoptosis,APAF-1,Apoptotic Protease-Activating Factor 1,Spis,XP_022790799,6hr,NA,1st timepoint after T0,Kvitt,10.1038/srep30359
+Type1,Apoptosis,BI-1,Bax-inhibitor 1,Spis,XP_022802442,6hr,NA,1st timepoint after T0,Kvitt,10.1038/srep30359
+Type1,UPR,HSP70,heat shock protein 70,Spis,XP_022805896;XP_022779048,6hr,NA,1st timepoint after T0,Kvitt,10.1038/srep30359
+Type1,Apoptosis,Survivin,Survivin,Spis,XP_022794533,48hr,NA,NA,Kvitt,10.1038/srep30359
+Type1,Apoptosis,Casp7,Caspase-7,Edia,AIPGENE3163,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,Innate immunity,NF-KB1,NF-KB1,Edia,AIPGENE8848,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,UPR,HSF1,Heat shock factor protein 1,Edia,AIPGENE11173,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,Innate immunity,TRAF3,TNF receptor-associated factor 3,Edia,AIPGENE14887,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,Innate immunity,IRF8,Interferon regulatory factor 8,Edia,AIPGENE1568,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,ROS response,Nrf1,Nuclear factor erythroid 2-related factor 1,Edia,AIPGENE8449,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,UPR,Calu,Calumenin-B,Edia,AIPGENE9938,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,Innate immunity,TNFRSF27,TNF receptor superfamily member 27,Edia,AIPGENE27609,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,UPR,Hsc71,Heat shock cognate 71 kDa protein,Edia,AIPGENE21738,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,UPR,HSP70,Heat shock 70 kDa protein 1A,Edia,AIPGENE18790,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,UPR,HSP70,Heat shock 70 kDa protein,Edia,AIPGENE8387,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,UPR,HSP90,Heat shock protein HSP 90-alpha 1,Edia,AIPGENE3199,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,UPR,DNaj,DnaJ protein homolog 1,Edia,AIPGENE5579,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type2,Ammonium transport,AMT1,Putative ammonium transporter 1,Edia,AIPGENE17420,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
+Type2,Ammonium transport,RhBG,Ammonium transporter Rh type B,Edia,AIPGENE18105,NA,3hr,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type2,Glucose transport,Glut8,Facilitated trehalose transporter Tret1,Edia,AIPGENE18406,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
+Type2,Lipid metabolism,NPC2,Epididymal secretory protein E1,Edia,AIPGENE22473,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
+Type2,Lipid metabolism,NPC2,Protein NPC2 homolog,Edia,AIPGENE22527,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
+Type2,Lipid metabolism,ALDH3B1,Aldehyde dehydrogenase family 3 member B1,Edia,AIPGENE21619,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
+Type2,Lipid metabolism,PLA2,Phospholipase A2,Edia,AIPGENE11619,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
+Type2,Lipid metabolism,Alox5,Arachidonate 5-lipoxygenase,Edia,AIPGENE21881,NA,3hr,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type2,Lipid metabolism,ALOX12B,"Arachidonate 12-lipoxygenase, 12R-type",Edia,AIPGENE21885,NA,3hr,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type2,Extracellular matrix,ACAN,Aggrecan core protein,Edia,AIPGENE11251,NA,3hr,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type2,Extracellular matrix,NID-2,Nidogen-2,Edia,AIPGENE11248,NA,3hr,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type2,Extracellular matrix,VIT,Vitrin,Edia,AIPGENE6809,NA,3hr,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type2,Immunity and stress,ST1C2,Sulfotransferase 1C2A,Edia,AIPGENE20198,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
+Type2,Immunity and stress,SRB1,Scavenger receptor class B member 1,Edia,AIPGENE25617,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
+Type2,Immunity and stress,TNFR27,Tumor necrosis factor receptor superfamily member 27,Edia,AIPGENE27690,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
+Type2,Immunity and stress,TGFa,Protransforming growth factor alpha,Edia,AIPGENE894,NA,3hr,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type2,Anabolic glutamate synthesis,GS,glutamine synthetase,Spis,XP_022787072,NA,day10,1st timepoint after T0;pre-bleach,Rädecker,10.1073/pnas.2022653118
+Type2,Anabolic glutamate synthesis,GOGAT,glutamate synthase,Spis,XP_022791525,NA,day10,1st timepoint after T0;pre-bleach,Rädecker,10.1073/pnas.2022653118
+Type2,Anabolic glutamate synthesis,GDH,glutamate dehydrogenase,Spis,XP_022780238;XP_022780239;XP_022780240;XP_022780241;XP_022780242,NA,day10,1st timepoint after T0;pre-bleach,Rädecker,10.1073/pnas.2022653118
+Type2,Glucose transport,SLC2A8,"Solute carrier family 2, facilitated glucose transporter member 8",Spis,XP_022789907,NA,day10,1st timepoint after T0;pre-bleach,Rädecker,10.1073/pnas.2022653118
+Type2,Ammonium transport,AMT1,Putative ammonium transporter 1,Spis,XP_022793815;XP_022793816;XP_022793817;XP_022793818;XP_022793819;XP_022793820,NA,day10,1st timepoint after T0;pre-bleach,Rädecker,10.1073/pnas.2022653118
+Type2,Ammonium transport,AMT1,Ammonium transporter 1 member 1,Spis,XP_022778288,NA,day10,1st timepoint after T0;pre-bleach,Rädecker,10.1073/pnas.2022653118
+Type2,Ammonium transport,RhBG,Ammonium transporter Rh,Spis,XP_022795558;XP_022795559;XP_022795560;XP_022795555,NA,day10,1st timepoint after T0;pre-bleach,Rädecker,10.1073/pnas.2022653118
+Type2,Fatty acid transport,PMP34,peroxisomal membrane protein PMP34-like,Spis,XP_022780576;XP_022778209,NA,day10,1st timepoint after T0;pre-bleach,Rädecker,10.1073/pnas.2022653118

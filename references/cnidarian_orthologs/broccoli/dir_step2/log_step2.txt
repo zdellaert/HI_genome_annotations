@@ -1,0 +1,13 @@
+#species_file	nb_phylo	nb_NO_phylo	nb_empty_ali_ali	nb_pbm_tree
+Apoc_proteins.faa	35259	5428	0	0
+Mcap_proteins.faa	39150	6128	0	0
+Hvul_proteins.faa	20016	11643	0	0
+Xesp_proteins.faa	17626	6897	0	0
+Spis_proteins.faa	21418	2376	1	0
+Pcom_proteins.faa	32860	6253	0	0
+Hsym_proteins.faa	14105	3237	0	0
+Pacu_proteins.faa	26094	4146	0	0
+Ofav_proteins.faa	24481	3960	0	0
+Pdam_proteins.faa	17905	2060	0	0
+Edia_proteins.faa	21352	4658	3	0
+Nvec_proteins.faa	15694	6358	0	0

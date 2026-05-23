@@ -180,6 +180,11 @@ mkdir -p ../references/cnidarian_orthologs/broccoli/max_likelihood
 cd ../references/cnidarian_orthologs/broccoli/max_likelihood
 
 python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -phylogenies 'ml' -ext '.faa' -path_fasttree FastTree -threads 24
+
+# to consider:
+# python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -phylogenies 'ml' -ext '.faa' -path_fasttree FastTree -threads 128
+# --ntasks=4 --cpus-per-task=48 #split one task over multiple CPU
+# -t 14-00:00:00
 ```
 
 
@@ -442,113 +447,106 @@ write.csv(broc_pairs_3sp,
 <!-- write.csv(Biomin_broc_Mcap, file="genes_of_interest/Mcap_Biomin_Spis_ortholog.csv") -->
 <!-- ``` -->
 
-<!-- ### Heat Stress Genes -->
+### Heat Stress Genes
 
-<!-- ```{r} -->
-<!-- # load in manually curated list of genes of interest -->
-<!-- stress_genes_man <- read.csv("input_lists/HeatStressGenes.csv", header = TRUE) -->
+```{r}
+# load in manually curated list of genes of interest
+stress_genes_man <- read.csv("../references/heatstress/HeatStressGenes.csv", header = TRUE)
 
-<!-- NEED_TO_FIND_GENE_ID <- stress_genes_man %>% filter(is.na(species_gene_ID)) -->
-<!-- print(NEED_TO_FIND_GENE_ID) -->
+NEED_TO_FIND_GENE_ID <- stress_genes_man %>% filter(is.na(species_gene_ID))
+print(NEED_TO_FIND_GENE_ID)
 
-<!-- stress_genes_man <- stress_genes_man %>% filter(!is.na(species_gene_ID)) -->
-<!-- ``` -->
+stress_genes_man <- stress_genes_man %>% filter(!is.na(species_gene_ID))
+```
 
-<!-- ```{r} -->
-<!-- stress_genes <- stress_genes_man %>% separate_rows(species_gene_ID,sep =";") %>% filter(!is.na(species_gene_ID)) -->
+```{r}
+stress_genes <- stress_genes_man %>% separate_rows(species_gene_ID,sep =";") %>% filter(!is.na(species_gene_ID))
 
-<!-- unique(stress_genes$species) -->
+unique(stress_genes$species)
 
-<!-- ## clean gene IDs for Spis, only need to add .1 to the end of all the species_gene_ID - this is the format of the broc IDs -->
-<!-- stress_genes_Spis <- stress_genes %>% filter(species=="Spis")  %>%  -->
-<!--   mutate(protein_id = paste0(species_gene_ID,".1"))  -->
+## clean gene IDs for Spis, only need to add .1 to the end of all the species_gene_ID - this is the format of the broc IDs
+stress_genes_Spis <- stress_genes %>% filter(species=="Spis")  %>%
+  mutate(protein_id = paste0(species_gene_ID,".1"))
 
-<!-- ## make protein_id column for the Edia + Pdam genes, which already have their IDs in the right format -->
-<!-- stress_genes_Pdam <- stress_genes %>% filter(species=="Pdam") %>%  -->
-<!--   mutate(protein_id = species_gene_ID) -->
+## make protein_id column for the Edia + Pdam genes, which already have their IDs in the right format
+stress_genes_Pdam <- stress_genes %>% filter(species=="Pdam") %>%
+  mutate(protein_id = species_gene_ID)
 
-<!-- stress_genes_Edia <- stress_genes %>% filter(species=="Edia")  %>%  -->
-<!--   mutate(protein_id = species_gene_ID)  -->
+stress_genes_Edia <- stress_genes %>% filter(species=="Edia")  %>%
+  mutate(protein_id = species_gene_ID)
 
-<!-- ## combine and merge with broccoli orthologs -->
-<!-- stress_genes_final <- rbind(stress_genes_Pdam,stress_genes_Spis,stress_genes_Edia) -->
+## combine and merge with broccoli orthologs
+stress_genes_final <- rbind(stress_genes_Pdam,stress_genes_Spis,stress_genes_Edia)
 
-<!-- stress_broc <- stress_genes_final %>%  -->
-<!--     left_join(broc_pairs_clean, by = c("protein_id"="Gene_spA")) %>% -->
-<!--     bind_rows( -->
-<!--       stress_genes_final %>% left_join(broc_pairs_clean, by = c("protein_id"="Gene_spB")) %>% -->
-<!--         dplyr::rename(Gene_spB = Gene_spA)) -->
-<!-- ``` -->
+stress_broc <- stress_genes_final %>%
+    left_join(broc_pairs, by = c("protein_id"="Gene_spA")) %>%
+    bind_rows(
+      stress_genes_final %>% left_join(broc_pairs, by = c("protein_id"="Gene_spB")) %>%
+        dplyr::rename(Gene_spB = Gene_spA))
+```
 
-<!-- Species-specific lists for species: -->
+Species-specific lists for species:
 
-<!-- ```{r} -->
-<!-- # Pocillopora acuta -->
-<!-- stress_broc_Pacuta <- stress_broc %>% filter(grepl("acuta",Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB) %>% -->
-<!--   select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity -->
-<!--   distinct() %>% mutate(List="HeatStressGenes") -->
-<!-- # Porites compressa  -->
-<!-- stress_broc_Pcomp <- stress_broc %>% filter(grepl("compressa",Gene_spB)) %>% dplyr::rename(Pcomp_gene=Gene_spB) %>% -->
-<!--   select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity -->
-<!--   distinct() %>% mutate(List="HeatStressGenes") -->
-<!-- # Montipora capitata -->
-<!-- stress_broc_Mcap <- stress_broc %>% filter(grepl("capitata",Gene_spB)) %>% dplyr::rename(Mcap_gene=Gene_spB) %>% -->
-<!--   select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity -->
-<!--   distinct() %>% mutate(List="HeatStressGenes") -->
-<!-- # Orbicella faveolata -->
-<!-- stress_broc_Ofav <- stress_broc %>% filter(grepl("QW917",Gene_spB)) %>% dplyr::rename(Ofav_gene=Gene_spB) %>% -->
-<!--   select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity -->
-<!--   distinct() %>% mutate(List="HeatStressGenes") -->
+```{r}
+# Pocillopora acuta
+stress_broc_Pacuta <- stress_broc %>% filter(grepl("acuta",Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB) %>%
+  select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity
+  distinct() %>% mutate(List="HeatStressGenes")
+# Porites compressa
+stress_broc_Pcomp <- stress_broc %>% filter(grepl("compressa",Gene_spB)) %>% dplyr::rename(Pcomp_gene=Gene_spB) %>%
+  select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity
+  distinct() %>% mutate(List="HeatStressGenes")
+# Montipora capitata
+stress_broc_Mcap <- stress_broc %>% filter(grepl("capitata",Gene_spB)) %>% dplyr::rename(Mcap_gene=Gene_spB) %>%
+  select(-c(species_gene_ID,protein_id))  %>%  #remove ID columns from the original species for clarity
+  distinct() %>% mutate(List="HeatStressGenes")
 
-<!-- write.csv(stress_broc_Pacuta, file="genes_of_interest/HeatStressGenes_Pacuta.csv") -->
-<!-- write.csv(stress_broc_Pcomp, file="genes_of_interest/HeatStressGenes_Pcomp.csv") -->
-<!-- write.csv(stress_broc_Mcap, file="genes_of_interest/HeatStressGenes_Mcap.csv") -->
-<!-- write.csv(stress_broc_Ofav, file="genes_of_interest/HeatStressGenes_Ofav.csv") -->
-<!-- ``` -->
+write.csv(stress_broc_Pacuta, file="../annotation/heatstress/HeatStressGenes_Pacuta.csv")
+write.csv(stress_broc_Pcomp, file="../annotation/heatstress/HeatStressGenes_Pcomp.csv")
+write.csv(stress_broc_Mcap, file="../annotation/heatstress/HeatStressGenes_Mcap.csv")
+```
 
-<!-- What are we missing? -->
-<!-- ```{r} -->
-<!-- NEED_TO_FIND_GENE_ID$gene_id -->
+What are we missing?
+```{r}
+NEED_TO_FIND_GENE_ID$gene_id
 
-<!-- stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Pacuta$gene_id] -->
-<!-- stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Pcomp$gene_id] -->
-<!-- stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Mcap$gene_id] -->
-<!-- stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Ofav$gene_id] -->
+stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Pacuta$gene_id]
+stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Pcomp$gene_id]
+stress_genes_man$gene_id[!stress_genes_man$gene_id %in% stress_broc_Mcap$gene_id]
 
-<!-- stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Pacuta$gene_id,] -->
-<!-- stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Pcomp$gene_id,] -->
-<!-- stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Mcap$gene_id,] -->
-<!-- stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Ofav$gene_id,] -->
-<!-- ``` -->
+stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Pacuta$gene_id,]
+stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Pcomp$gene_id,]
+stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Mcap$gene_id,]
+```
 
-<!-- ## Appendix: Program installations -->
+## Appendix: Program installations
 
-<!-- ### Install Broccoli on unity -->
+### Install Broccoli on unity
 
-<!-- Set up conda environments and install program -->
+Set up conda environments and install program
 
-<!-- ```{bash, eval=FALSE} -->
-<!-- # enter interactive session -->
-<!-- salloc -->
+```{bash, eval=FALSE}
+# enter interactive session
+salloc
 
-<!-- # load conda -->
-<!-- module load conda/latest -->
+# load conda
+module load conda/latest
 
-<!-- # create and activate environment -->
-<!-- conda create --prefix /work/pi_hputnam_uri_edu/conda/envs/env-broccoli python=3.8 ete3 -->
-<!-- conda activate /work/pi_hputnam_uri_edu/conda/envs/env-broccoli -->
+# create and activate environment
+conda create --prefix /work/pi_hputnam_uri_edu/conda/envs/env-broccoli python=3.8 ete3
+conda activate /work/pi_hputnam_uri_edu/conda/envs/env-broccoli
 
-<!-- # clone broccoli repo into environment -->
-<!-- cd /work/pi_hputnam_uri_edu/conda/envs/env-broccoli -->
-<!-- git clone https://github.com/rderelle/Broccoli.git -->
-<!-- cd Broccoli -->
+# clone broccoli repo into environment
+cd /work/pi_hputnam_uri_edu/conda/envs/env-broccoli
+git clone https://github.com/rderelle/Broccoli.git
+cd Broccoli
 
-<!-- # check that the install is sucessful by running the help command -->
-<!-- python broccoli.py -help -->
+# check that the install is sucessful by running the help command
+python broccoli.py -help
 
-<!-- # Make a symlink (shortcut) to home directory -->
-<!-- ln -s /work/pi_hputnam_uri_edu/conda/envs/env-broccoli/Broccoli/broccoli.py ~/broccoli.py -->
+# Make a symlink (shortcut) to home directory
+ln -s /work/pi_hputnam_uri_edu/conda/envs/env-broccoli/Broccoli/broccoli.py ~/broccoli.py
 
-<!-- # now it can run in any directory via -->
-<!-- python ~/broccoli.py -help -->
-<!-- ``` -->
+# now it can run in any directory via
+python ~/broccoli.py -help
+```
