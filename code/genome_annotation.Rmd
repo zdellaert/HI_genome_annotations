@@ -253,90 +253,6 @@ Pacuta_SwissP <- read.delim("../annotation/Pocillopora_acuta_HIv2_Swissprot_GO.t
 Pcomp_SwissP <- read.delim("../annotation/Porites_compressa_HIv1_Swissprot_GO.tsv") %>% dplyr::rename(GOs = GeneOntologyIDs)
 ```
 
-## Heat Stress Genes
-
-```{r}
-for (i in 1:length(species)){
-HeatStressGenes <- read_csv(paste0("../references/heatstress/HeatStressGenes_", species[i] ,".csv")) %>%
-  dplyr::select(-1) %>%
-  dplyr::rename(query = paste0(species[i],"_gene")) %>%
-  dplyr::select(query,everything())
-
-assign(paste0(species[i],"_HeatStressGenes"),HeatStressGenes)
-
-HeatStressGenes_unique <- HeatStressGenes %>%
-  group_by(query) %>%
-  summarize(gene_id = paste(unique(gene_id), collapse = ";"),
-            gene_name = paste(unique(gene_name), collapse = ";"),
-            response_type = paste(unique(response_type), collapse = ";"),
-            category = paste(unique(category), collapse = ";")
-            ) %>%
-  left_join(get(paste0(species[i],"_SwissP")))
-
-assign(paste0(species[i],"_HeatStressGenes_unique"),HeatStressGenes_unique)
-
-  rm(HeatStressGenes)
-  rm(HeatStressGenes_unique)
-}
-```
-
-```{r}
-for_natalie <- Pacuta_HeatStressGenes_unique %>% filter(grepl("BAK",gene_id,ignore.case = TRUE)|
-                                                        grepl("BAX",gene_id,ignore.case = TRUE)|
-                                                        grepl("Bcl-2",gene_id,ignore.case = TRUE)|
-                                                        grepl("AMPK",gene_id,ignore.case = TRUE)|  
-                                                        grepl("OGG1",gene_id,ignore.case = TRUE)|
-                                                        grepl("Foxo3",gene_id,ignore.case = TRUE)| 
-                                                        grepl("HO-1",gene_id,ignore.case = TRUE)|
-                                                        grepl("Nrf2",gene_id,ignore.case = TRUE)|
-                                                        grepl("BI-1",gene_id,ignore.case = TRUE)|
-                                                        grepl("HSP",gene_id,ignore.case = TRUE)
-                                                          )
-
-for_natalie_swissP <- Pacuta_SwissP %>% filter(grepl("Bcl-2 homologous antagonist/killer",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Apoptosis regulator BAX",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Apoptosis regulator Bcl-2",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("5'-AMP-activated protein kinase",ProteinNames,ignore.case = TRUE)|  
-                                                        grepl("8-oxoguanine DNA glycosylase",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Forkhead box protein O3",ProteinNames,ignore.case = TRUE)| 
-                                                        grepl("Heme oxygenase",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Nuclear factor erythroid 2",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Bax inhibitor 1 (BI-1)",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Heat shock protein 70 A2",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Heat shock protein HSP 90",ProteinNames,ignore.case = TRUE)
-                                                          )
-
-for_natalie_swissP_missing <- for_natalie_swissP %>% filter(!(query %in% for_natalie$query)) %>%
-  mutate(gene_id = "",gene_id = "",gene_name = "",response_type = "",category = "")
-
-for_natalie_added <- rbind(for_natalie,for_natalie_swissP_missing) 
-
-for_natalie_added <- for_natalie_added %>%
-                            mutate(gene_id = case_when(
-                              gene_id == "" & grepl("Apoptosis regulator Bcl-2", ProteinNames) ~ "Bcl-2",
-                              gene_id == "" & grepl("Bcl-2 homologous antagonist/killer", ProteinNames) ~ "BAK",
-                              gene_id == "" & grepl("5'-AMP-activated protein kinase", ProteinNames) ~ "AMPK",
-                              TRUE ~ gene_id
-                            ),
-                            gene_name = case_when(
-                              gene_id == "Bcl-2" ~ "B-cell lymphoma 2",
-                              gene_id == "BAK" ~ "Bcl2 Antagonist/Killer",
-                              gene_id == "AMPK" ~ "AMP-activated protein kinase",
-                              TRUE ~ gene_name
-                            ),
-                            response_type = case_when(
-                              gene_id %in% c("Bcl-2", "BAK", "AMPK") ~ "Type1",
-                              TRUE ~ response_type
-                            ),
-                            category = case_when(
-                              gene_id %in% c("Bcl-2", "BAK") ~ "Apoptosis",
-                              gene_id == "AMPK" ~ "ROS response",
-                              TRUE ~ category
-                            ))
-
-write.csv(for_natalie_added, file = "../annotation/heatstress/NC_HeatStress_Genes.csv",row.names = FALSE, quote = FALSE)
-```
-
 ## Membrane_Channels
 
 ### Find coral IDs for human membrane channel sequences
@@ -493,7 +409,7 @@ for (i in 1:length(species)){
   summarize(
     gene_set = paste(unique(gene_set), collapse = ", "),
     Bhattacharya_ID = paste(unique(Bhattacharya_ID[Bhattacharya_ID != ""]), collapse = ", "),
-    across(-c(gene_set, Bhattacharya_ID), first),
+    across(-c(gene_set, Bhattacharya_ID), dplyr::first),
     .groups = "drop"
   ) %>%
   mutate(short_name = str_replace(ProteinNames, "\\s+\\(.*", ""),

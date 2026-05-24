@@ -15,6 +15,10 @@ library(purrr)
 library(tibble)
 library(tidyr)
 
+#below are for the motif analysis only
+library(Biostrings)
+library(rtracklayer)
+
 # set up some universal vectors
 species <- c("Mcap","Pacuta","Pcomp")
 ```
@@ -246,90 +250,6 @@ Pacuta_SwissP <- read.delim("../annotation/Pocillopora_acuta_HIv2_Swissprot_GO.t
 Pcomp_SwissP <- read.delim("../annotation/Porites_compressa_HIv1_Swissprot_GO.tsv") %>% dplyr::rename(GOs = GeneOntologyIDs)
 ```
 
-## Heat Stress Genes
-
-``` r
-for (i in 1:length(species)){
-HeatStressGenes <- read_csv(paste0("../references/heatstress/HeatStressGenes_", species[i] ,".csv")) %>%
-  dplyr::select(-1) %>%
-  dplyr::rename(query = paste0(species[i],"_gene")) %>%
-  dplyr::select(query,everything())
-
-assign(paste0(species[i],"_HeatStressGenes"),HeatStressGenes)
-
-HeatStressGenes_unique <- HeatStressGenes %>%
-  group_by(query) %>%
-  summarize(gene_id = paste(unique(gene_id), collapse = ";"),
-            gene_name = paste(unique(gene_name), collapse = ";"),
-            response_type = paste(unique(response_type), collapse = ";"),
-            category = paste(unique(category), collapse = ";")
-            ) %>%
-  left_join(get(paste0(species[i],"_SwissP")))
-
-assign(paste0(species[i],"_HeatStressGenes_unique"),HeatStressGenes_unique)
-
-  rm(HeatStressGenes)
-  rm(HeatStressGenes_unique)
-}
-```
-
-``` r
-for_natalie <- Pacuta_HeatStressGenes_unique %>% filter(grepl("BAK",gene_id,ignore.case = TRUE)|
-                                                        grepl("BAX",gene_id,ignore.case = TRUE)|
-                                                        grepl("Bcl-2",gene_id,ignore.case = TRUE)|
-                                                        grepl("AMPK",gene_id,ignore.case = TRUE)|  
-                                                        grepl("OGG1",gene_id,ignore.case = TRUE)|
-                                                        grepl("Foxo3",gene_id,ignore.case = TRUE)| 
-                                                        grepl("HO-1",gene_id,ignore.case = TRUE)|
-                                                        grepl("Nrf2",gene_id,ignore.case = TRUE)|
-                                                        grepl("BI-1",gene_id,ignore.case = TRUE)|
-                                                        grepl("HSP",gene_id,ignore.case = TRUE)
-                                                          )
-
-for_natalie_swissP <- Pacuta_SwissP %>% filter(grepl("Bcl-2 homologous antagonist/killer",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Apoptosis regulator BAX",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Apoptosis regulator Bcl-2",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("5'-AMP-activated protein kinase",ProteinNames,ignore.case = TRUE)|  
-                                                        grepl("8-oxoguanine DNA glycosylase",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Forkhead box protein O3",ProteinNames,ignore.case = TRUE)| 
-                                                        grepl("Heme oxygenase",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Nuclear factor erythroid 2",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Bax inhibitor 1 (BI-1)",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Heat shock protein 70 A2",ProteinNames,ignore.case = TRUE)|
-                                                        grepl("Heat shock protein HSP 90",ProteinNames,ignore.case = TRUE)
-                                                          )
-
-for_natalie_swissP_missing <- for_natalie_swissP %>% filter(!(query %in% for_natalie$query)) %>%
-  mutate(gene_id = "",gene_id = "",gene_name = "",response_type = "",category = "")
-
-for_natalie_added <- rbind(for_natalie,for_natalie_swissP_missing) 
-
-for_natalie_added <- for_natalie_added %>%
-                            mutate(gene_id = case_when(
-                              gene_id == "" & grepl("Apoptosis regulator Bcl-2", ProteinNames) ~ "Bcl-2",
-                              gene_id == "" & grepl("Bcl-2 homologous antagonist/killer", ProteinNames) ~ "BAK",
-                              gene_id == "" & grepl("5'-AMP-activated protein kinase", ProteinNames) ~ "AMPK",
-                              TRUE ~ gene_id
-                            ),
-                            gene_name = case_when(
-                              gene_id == "Bcl-2" ~ "B-cell lymphoma 2",
-                              gene_id == "BAK" ~ "Bcl2 Antagonist/Killer",
-                              gene_id == "AMPK" ~ "AMP-activated protein kinase",
-                              TRUE ~ gene_name
-                            ),
-                            response_type = case_when(
-                              gene_id %in% c("Bcl-2", "BAK", "AMPK") ~ "Type1",
-                              TRUE ~ response_type
-                            ),
-                            category = case_when(
-                              gene_id %in% c("Bcl-2", "BAK") ~ "Apoptosis",
-                              gene_id == "AMPK" ~ "ROS response",
-                              TRUE ~ category
-                            ))
-
-write.csv(for_natalie_added, file = "../annotation/heatstress/NC_HeatStress_Genes.csv",row.names = FALSE, quote = FALSE)
-```
-
 ## Membrane_Channels
 
 ### Find coral IDs for human membrane channel sequences
@@ -435,7 +355,7 @@ for (sp in species){
   annot_tab <- bltabl %>% left_join(Bhattacharya2016, join_by("qseqid"=="Protein.HS")) 
   
   # for proteins that have their best BLAST match as being more than one coral match, keep only the best coral match
-  annot_tab <- annot_tab %>% group_by(sseqid) %>% arrange(evalue, desc(bitscore)) %>% slice(1) %>% ungroup()
+  annot_tab <- annot_tab %>% group_by(sseqid) %>% arrange(evalue, desc(bitscore)) %>% dplyr::slice(1) %>% ungroup()
   
   assign(paste0(sp,"_channels_BLAST"),annot_tab)
 }
@@ -487,7 +407,7 @@ for (i in 1:length(species)){
   summarize(
     gene_set = paste(unique(gene_set), collapse = ", "),
     Bhattacharya_ID = paste(unique(Bhattacharya_ID[Bhattacharya_ID != ""]), collapse = ", "),
-    across(-c(gene_set, Bhattacharya_ID), first),
+    across(-c(gene_set, Bhattacharya_ID), dplyr::first),
     .groups = "drop"
   ) %>%
   mutate(short_name = str_replace(ProteinNames, "\\s+\\(.*", ""),
@@ -498,4 +418,213 @@ for (i in 1:length(species)){
   
   write_csv(channel_df,paste0("../annotation/calcium_membrane_transport/",species[i],"_membrane_channels.csv"))
 }
+```
+
+## Motif Identification
+
+### Notes on defining promoter regions
+
+I am basing this idea off of the following paper:
+
+“extract the putative promoter sequence, defined as the 500 bp
+immediately upstream of the predicted transcription start site in the
+gene model.”
+
+Cleves PA, Krediet CJ, Lehnert EM, Onishi M, Pringle JR. Insights into
+coral bleaching under heat stress from analysis of gene expression in a
+sea anemone model system. Proceedings of the National Academy of
+Sciences. 2020 Nov 17;117(46):28906–17.
+(<https://www.pnas.org/doi/10.1073/pnas.2015737117>)
+
+I am going to try using the promoters function of the GenomicRanges
+Package (manual here:
+<https://bioconductor.org/packages/devel/bioc/manuals/GenomicRanges/man/GenomicRanges.pdf>):
+
+The function is described as such:
+
+promoters: assumes that the ranges in x represent transcript regions and
+returns the ranges of the corresponding promoter regions. The result is
+another GenomicRanges derivative parallel to the input, that is, of the
+same length as x and with the i-th element in the output corresponding
+to the i-th element in the input.
+
+The promoter regions extend around the transcription start sites (TSS)
+which are located at start(x) for ranges on the + or \* strand, and at
+end(x) for ranges on the - strand. The upstream and downstream arguments
+define the number of nucleotides in the 5’ and 3’ direction,
+respectively. More precisely, the output range is defined as
+
+> (start(x) - upstream) to (start(x) + downstream - 1)
+
+for ranges on the + or \* strand, and as
+
+> (end(x) - downstream + 1) to (end(x) + upstream)
+
+for ranges on the - strand. Be aware that the returned object might
+contain **out-of-bound ranges** i.e. ranges that start before the first
+nucleotide position and/or end after the last nucleotide position of the
+underlying sequence.
+
+I want to identify identify transcription factor binding sites in the
+promoter regions of the genes in our genomes.
+
+#### Step 1: Gather genome gff and fasta files
+
+``` bash
+cd ../references
+
+# copy all genome fasta files and gff3 here
+cp  /work/pi_hputnam_uri_edu/HI_Genomes/*/*.assembly.fasta .
+cp  /work/pi_hputnam_uri_edu/HI_Genomes/*/*.genes.gff3 .
+```
+
+#### Step 2: Load in files and define genomic ranges
+
+``` r
+ref_files <- list.files("../references", full.names = TRUE)
+fastas <- ref_files[grep(pattern = "assembly.fasta", ref_files)]
+gffs <- ref_files[grep(pattern = "genes.gff3", ref_files)]
+
+for (genome_fasta in fastas){
+      base <- str_replace(basename(genome_fasta),".assembly.fasta","")
+      gff_file <- str_replace(genome_fasta,"assembly.fasta","genes.gff3")
+      
+      genome <- Biostrings::readDNAStringSet(genome_fasta, format = "fasta")
+      gff <- rtracklayer::import(gff_file, format = "gff")
+      
+      #keep only transcript entries, to have one entry per gene
+      gff <- gff[gff$type=="transcript"]
+      
+      #the gff is missing chromosome lengths, so I am adding them here:
+      chromosome_lengths <- seqlengths(genome)
+      seqlengths(gff) <- chromosome_lengths[match(seqlevels(gff), names(chromosome_lengths))]
+      
+      # define upstream promoter regions
+      promoters_500_UP <- promoters(gff, upstream = 500, downstream = 0)
+      
+      # trim any promoters that exit the boundaries of the chromosomes, none of mine did but just in case
+      promoters_500_UP <- GenomicRanges::trim(promoters_500_UP)
+      
+      # also remove any rows where the promoter sequence now has a width < 50
+      promoters_500_UP <- promoters_500_UP[promoters_500_UP@ranges@width > 50]
+      
+      # Then, extract these sequences, by chromosome, using the function "DNAStringSet":
+      # create a DNAStringSet object to house all the sequences
+      promoters_all <- DNAStringSet()
+      
+      for (chromosome in unique(seqnames(promoters_500_UP))) {
+        
+        # filter the genome, one chromosome at a time
+        genome_filtered <- genome[genome@ranges@NAMES %in% chromosome]
+        
+        # one chromosome at a time, filter the gff dataframe
+        promoters_500_UP_filtered <- data.frame(promoters_500_UP) %>% filter(seqnames == chromosome)
+        
+        # set up a list for this chromosome
+        promoters_chromosome <- DNAStringSetList()
+        
+        # then iterate over every row (transcript) for that chromosome
+        for (i in 1:nrow(promoters_500_UP_filtered)) {
+          
+          #use the DNAStringSet function to subset the chromosome into the promoter regions of interest
+          promoter <- DNAStringSet(genome_filtered,
+                                   start= promoters_500_UP_filtered$start[i],
+                                   end= promoters_500_UP_filtered$end[i])
+          
+          #carry over the transcript name (what we really care about!)
+          names(promoter) <- promoters_500_UP_filtered$ID[i]
+          
+          #append this extracted sequence to the promoter list for this chromosome
+          promoters_chromosome <-  c(promoters_chromosome, promoter)
+        }
+        
+        #append this chromosome list to the DNAStringSetList for all chromosomes
+        promoters_all <- c(promoters_all, unlist(promoters_chromosome))
+      }
+      
+      writeXStringSet(promoters_all, filepath = paste0( "../annotation/promoters/",base,"_promoters_500_upstream.fasta"))
+}
+```
+
+#### Step 3: Run FIMO for any motifs of interest to identify them in the genome
+
+Cleves lab new April 2026 preprint: “The 500 bp upstream of each gene in
+the genomes was identified with a script from ref. 66 and used as input
+for FIMO analysis 67 using default settings to identify the canonical
+HSF1 binding motif (ID: MA0486 in the JASPAR database 68) as in ref. 66
+(Figure 2G). Frequency of putative HSF1 binding motifs was then
+quantified per gene for further analysis.”
+
+1.  Swinhoe N, Tinoco AI, Sarfati DN, Henderson CF, Kowalewski GP, Meier
+    EK, et al. CRISPR/Cas9-mutagenesis reveals that varying dependence
+    on HSF1 is associated with differences in coral heat tolerance.
+    bioRxiv; 2026. p. 2026.04.01.714264.
+    <doi:10.64898/2026.04.01.714264>
+
+``` bash
+#Download motif files or entire motif databases
+cd ../references
+
+mkdir motif_databases
+cd motif_databases
+
+# Download motif files of interest:
+
+# HSF1
+wget "https://jaspar.elixir.no/api/v1/matrix/MA0486.1.meme"
+
+# Nrf2 (Nuclear factor erythroid 2-related factor 2 = NFE2L2/Nrf2)
+wget "https://jaspar.elixir.no/api/v1/matrix/MA0150.1.meme"
+
+# Foxo3
+wget "https://jaspar.elixir.no/api/v1/matrix/MA0157.2.meme"
+
+cat MA0486.1.meme MA0150.1.meme MA0157.2.meme > stress_TFs.meme
+
+cd ../../code
+nano 03_TFbindingsites_FIMO.sh
+```
+
+``` bash
+#!/usr/bin/env bash
+#SBATCH --export=NONE
+#SBATCH --nodes=1 --ntasks-per-node=24
+#SBATCH --signal=2
+#SBATCH --no-requeue
+#SBATCH --mem=32GB
+#SBATCH --error="%x_error.%j"
+#SBATCH --output="%x_output.%j"
+#SBATCH -t 01:00:00
+#SBATCH --mail-type=BEGIN,END,FAIL #email you when job starts, stops and/or fails
+
+SINGULARITY_IMAGE="docker://memesuite/memesuite:latest"
+
+cd ../annotation/promoters
+mkdir -p fimo_output
+
+module load apptainer/latest
+
+species=(Mcap Pacuta Pcomp)
+fastas=(
+  "Montipora_capitata_HIv3_promoters_500_upstream.fasta"
+  "Pocillopora_acuta_HIv2_promoters_500_upstream.fasta"
+  "Porites_compressa_HIv1_promoters_500_upstream.fasta"
+)
+
+# run FIMO 
+
+for i in "${!species[@]}"; do
+    sp="${species[$i]}"
+    fasta="${fastas[$i]}"
+
+    echo "Starting analysis of $sp using $fasta"
+    
+    # run FIMO with default settings (--thresh 0.0001, --max-stored-scores 100000)
+    singularity exec --cleanenv $SINGULARITY_IMAGE fimo \
+        -oc "fimo_output/${sp}_stress_TFs" \
+        --thresh 0.0001 \
+        --max-stored-scores 100000 \
+        ../../references/motif_databases/stress_TFs.meme \
+        "$fasta"
+done
 ```

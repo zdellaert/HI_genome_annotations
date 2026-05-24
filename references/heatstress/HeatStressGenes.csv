@@ -14,11 +14,11 @@ Type1,ROS response,OGG1,8-oxoguanine DNA glycosylase,Pdam,XP_027048124.1,NA,NA,N
 Type1,Apoptosis,Cas3,Caspase 3,Pdam,XP_027055203.1,NA,NA,NA,Majerova,10.1038/s42003-025-08671-y
 Type1,ROS response,Nrf2,Nuclear factor erythroid 2-related factor 2,Pdam,XP_027060548.1,NA,NA,NA,Majerova,10.1038/s42003-025-08671-y
 Type1,Apoptosis,mTOR,mTOR,Pdam,XP_027052994.1,NA,NA,NA,Majerova,10.1038/s42003-025-08671-y
-Type1,Innate immunity,NF-KB,NF-KB,Ahya,NA,2.5hr,NA,NA,Traylor Knowles,10.1086/692717
-Type1,UPR,HSP70,HSP70,Ahya,NA,1hr,NA,NA,Traylor Knowles,10.1086/692717
-Type1,Innate immunity,AP-1,Transcription factor AP-1,Ahya,NA,3hr,NA,NA,Traylor Knowles,10.1086/692717
-Type1,Stress transcription factors,Elk-3,ETS domain-containing protein Elk-3,Ahya,NA,4hr,NA,NA,Traylor Knowles,10.1086/692717
-Type1,Stress transcription factors,FosB,FosB,Ahya,NA,4hr,NA,NA,Traylor Knowles,10.1086/692717
+Type1,Innate immunity,NF-KB,NF-kappa B,Ahya,XP_067031383,2.5hr,NA,NA,Traylor Knowles,10.1086/692717
+Type1,UPR,HSP70,HSP70,Ahya,XP_067036063,1hr,NA,NA,Traylor Knowles,10.1086/692717
+Type1,Innate immunity,AP-1,Transcription factor AP-1/Jun,Ahya,XP_067018442,3hr,NA,NA,Traylor Knowles,10.1086/692717
+Type1,Stress transcription factors,Elk-3,ETS domain-containing protein Elk-3,Ahya,XP_067039494;XP_067025821,4hr,NA,NA,Traylor Knowles,10.1086/692717
+Type1,Stress transcription factors,FosB,FosB,Ahya,XP_067052902,4hr,NA,NA,Traylor Knowles,10.1086/692717
 Type1,ROS response,CAT,Catalase,Pdam,XP_027047137.1;XP_027047049.1,NA,NA,NA,NA,NA
 Type1,ROS response,SOD,Superoxide dismutase,Pdam,XP_027056263.1;XP_027056265.1;XP_027056266.1;XP_027049096.1;XP_027049101.1,NA,NA,NA,NA,NA
 Type1,Apoptosis,Casp,Caspase,Spis,XP_022784458,6hr,NA,1st timepoint after T0,Kvitt,10.1038/srep30359
@@ -29,7 +29,7 @@ Type1,Apoptosis,BI-1,Bax-inhibitor 1,Spis,XP_022802442,6hr,NA,1st timepoint afte
 Type1,UPR,HSP70,heat shock protein 70,Spis,XP_022805896;XP_022779048,6hr,NA,1st timepoint after T0,Kvitt,10.1038/srep30359
 Type1,Apoptosis,Survivin,Survivin,Spis,XP_022794533,48hr,NA,NA,Kvitt,10.1038/srep30359
 Type1,Apoptosis,Casp7,Caspase-7,Edia,AIPGENE3163,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
-Type1,Innate immunity,NF-KB1,NF-KB1,Edia,AIPGENE8848,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,Innate immunity,NF-KB,NF-kappa B,Edia,AIPGENE8848,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type1,UPR,HSF1,Heat shock factor protein 1,Edia,AIPGENE11173,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type1,Innate immunity,TRAF3,TNF receptor-associated factor 3,Edia,AIPGENE14887,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type1,Innate immunity,IRF8,Interferon regulatory factor 8,Edia,AIPGENE1568,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
