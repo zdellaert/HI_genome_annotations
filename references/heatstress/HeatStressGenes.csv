@@ -41,6 +41,8 @@ Type1,UPR,HSP70,Heat shock 70 kDa protein 1A,Edia,AIPGENE18790,3hr,NA,1st timepo
 Type1,UPR,HSP70,Heat shock 70 kDa protein,Edia,AIPGENE8387,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type1,UPR,HSP90,Heat shock protein HSP 90-alpha 1,Edia,AIPGENE3199,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type1,UPR,DNaj,DnaJ protein homolog 1,Edia,AIPGENE5579,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,Apoptosis,BNIP3,BCL2/adenovirus E1B 19 kDa protein-interacting protein 3,Spis,XP_022782907,NA,NA,NA,NA,NA
+Type1,Apoptosis,HIF-a,Hypoxia-inducible factor 1-alpha (HIF-1-alpha),Spis,XP_022782460,NA,NA,NA,NA,NA
 Type2,Ammonium transport,AMT1,Putative ammonium transporter 1,Edia,AIPGENE17420,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
 Type2,Ammonium transport,RhBG,Ammonium transporter Rh type B,Edia,AIPGENE18105,NA,3hr,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type2,Glucose transport,Glut8,Facilitated trehalose transporter Tret1,Edia,AIPGENE18406,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
