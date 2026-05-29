@@ -231,7 +231,7 @@ g <- graph_from_data_frame(edges, directed = FALSE)
 summary(g)
 ```
 
-    ## IGRAPH 4391567 UN-- 105700 299849 -- 
+    ## IGRAPH 1b7ae72 UN-- 105700 299849 -- 
     ## + attr: name (v/c)
 
 ``` r
@@ -345,7 +345,7 @@ write.csv(broc_pairs_3sp,
 Biomineralization Toolkit gene list from [Scucchia et
 al. 2021](https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.15812).
 
-#### Biomineralization list based on BLAST analysis
+#### Version A: Biomineralization list based on BLAST analysis
 
 - I reformatted fasta file provided by F. Scucchia so that each header
   began on a new line, so that each sequence is on one single line, and
@@ -378,10 +378,10 @@ Biomin_blast_results <- Biomin_blast_results %>% filter(V11 < 0.01) %>% select(V
 merged_data <- Biomin_genes %>%
   inner_join(Biomin_blast_results, by = c("accessionnumber/geneID" = "V1")) %>% dplyr::rename("Pocillopora_acuta_best_hit" = "V2") %>% mutate(List="Biomin_Genes")
 
-write.csv(merged_data, "../annotation/biomineralization/Pacuta_Biomin_Blast.csv", row.names = F)
+write.csv(merged_data, "../annotation/biomineralization/blast_based/Pacuta_Biomin_Blast.csv", row.names = F)
 ```
 
-#### Biomineralization list based on ortholog analysis
+#### Version B (Most current): Biomineralization list based on ortholog analysis
 
 ``` r
 Biomin_Spis <- read_xlsx("../references/biomineralization/Biomineralization_Toolkit_FScucchia.xlsx")  %>% clean_names()
