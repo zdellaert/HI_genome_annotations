@@ -11,6 +11,8 @@ Zoe Dellaert
 library(tidyverse)
 library(data.table)
 library(igraph)
+library(readxl)
+library(janitor)
 
 # set up some universal vectors
 species <- c("Mcap","Pacuta","Pcomp")
@@ -229,7 +231,7 @@ g <- graph_from_data_frame(edges, directed = FALSE)
 summary(g)
 ```
 
-    ## IGRAPH 57027f0 UN-- 105700 299849 -- 
+    ## IGRAPH 4391567 UN-- 105700 299849 -- 
     ## + attr: name (v/c)
 
 ``` r
@@ -338,181 +340,147 @@ write.csv(broc_pairs_3sp,
           row.names = FALSE)
 ```
 
-<!-- ### Biomineralization Toolkit -->
+### Biomineralization Toolkit
 
-<!-- Biomineralization Toolkit gene list from [Scucchia et al. 2021](https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.15812). -->
+Biomineralization Toolkit gene list from [Scucchia et
+al. 2021](https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.15812).
 
-<!-- #### Biomineralization list based on BLAST analysis -->
+#### Biomineralization list based on BLAST analysis
 
-<!-- - reformatted fasta file provided by F. Scucchia so that each header began on a new line, so that each sequence is on one single line, and to remove duplicate genes or genes not in the accompanying excel file. -->
+- I reformatted fasta file provided by F. Scucchia so that each header
+  began on a new line, so that each sequence is on one single line, and
+  to remove duplicate genes or genes not in the accompanying excel file.
+- There are 172 genes in the “toolkit” from *Stylophora pistillata*,
+  which is in the same family as *Pocillopora acuta*.
 
-<!-- - There are 172 genes in the "toolkit"  -->
+``` bash
+#request interactive computing node
+salloc -p cpu -c 8 --mem 32G
 
-<!-- ```{bash eval=FALSE} -->
+#load BLAST module
+module load uri/main
+module load BLAST+/2.15.0-gompi-2023a
+cd ../references/biomineralization
 
-<!-- #request interactive computing node -->
+# run blast with tabular output
+blastp -query Biomineralization_Toolkit_FScucchia_ZDrefmt.fasta -db ../blast_dbs/Pacuta_prot -out Biomineralization_blast_results_tab.txt -outfmt 6 -evalue 0.01 -max_target_seqs 1
+```
 
-<!-- salloc -p cpu -c 8 --mem 32G -->
+Now, will take the best *Pocillopora acuta* alignment for each
+Biomineralization Gene and match to the name of that gene
 
-<!-- #load BLAST module -->
+``` r
+Biomin_genes <- read_xlsx("../references/biomineralization/Biomineralization_Toolkit_FScucchia.xlsx") %>% select(-`blasted protein in Stylophora`)
+Biomin_blast_results <- read.delim("../references/biomineralization/Biomineralization_blast_results_tab.txt", header=FALSE)
+Biomin_blast_results <- Biomin_blast_results %>% filter(V11 < 0.01) %>% select(V1, V2) %>% distinct()
 
-<!-- module load uri/main -->
+# Merge data frames based on accessionnumber/geneID
+merged_data <- Biomin_genes %>%
+  inner_join(Biomin_blast_results, by = c("accessionnumber/geneID" = "V1")) %>% dplyr::rename("Pocillopora_acuta_best_hit" = "V2") %>% mutate(List="Biomin_Genes")
 
-<!-- module load BLAST+/2.15.0-gompi-2023a -->
+write.csv(merged_data, "../annotation/biomineralization/Pacuta_Biomin_Blast.csv", row.names = F)
+```
 
-<!-- cd input_list/biomineralization -->
+#### Biomineralization list based on ortholog analysis
 
-<!-- # run blast with tabular output -->
+``` r
+Biomin_Spis <- read_xlsx("../references/biomineralization/Biomineralization_Toolkit_FScucchia.xlsx")  %>% clean_names()
 
-<!-- blastp -query Biomineralization_Toolkit_FScucchia_ZDrefmt.fasta -db ../../../references/blast_dbs/Pacuta_prot -out Biomineralization_blast_results_tab.txt -outfmt 6 -evalue 0.01 -max_target_seqs 1 -->
+Biomin_Spis <- Biomin_Spis %>%  separate_longer_delim(blasted_protein_in_stylophora, delim=",") %>%
+      mutate(blasted_protein_in_stylophora=str_squish(blasted_protein_in_stylophora))
+length(unique(Biomin_Spis$blasted_protein_in_stylophora))
+```
 
-<!-- ``` -->
+    ## [1] 124
 
-<!-- Now, will take the best Pacuta alignment for each Biomineralization Gene and match to the name of that gene -->
+``` r
+Biomin_broc <- Biomin_Spis %>%
+    left_join(broc_pairs, by = c("blasted_protein_in_stylophora"="Gene_spA")) %>%
+    bind_rows(
+      Biomin_Spis %>% left_join(broc_pairs, by = c("blasted_protein_in_stylophora"="Gene_spB")) %>%
+        dplyr::rename(Gene_spB = Gene_spA))
+```
 
-<!-- ```{r} -->
+``` r
+Biomin_broc_Pacuta <- Biomin_broc %>% filter(grepl("acuta",Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes")
 
-<!-- Biomin_genes <- read_xlsx("input_lists/biomineralization/Biomineralization_Toolkit_FScucchia.xlsx") %>% select(-`blasted protein in Stylophora`) -->
+write.csv(Biomin_broc_Pacuta, file="../annotation/biomineralization/Pacuta_Biomin_Spis_ortholog.csv")
 
-<!-- Biomin_blast_results <- read.delim("input_lists/biomineralization/Biomineralization_blast_results_tab.txt", header=FALSE)  -->
+Biomin_broc_Pdam<- Biomin_broc %>% filter(grepl("XP_027",Gene_spB)) %>% dplyr::rename(Pdam_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes")
 
-<!-- Biomin_blast_results <- Biomin_blast_results %>% filter(V11 < 0.01) %>% select(V1, V2) %>% distinct() -->
+write.csv(Biomin_broc_Pdam, file="../annotation/biomineralization/Pdam_Biomin_Spis_ortholog.csv")
 
-<!-- # Merge data frames based on accessionnumber/geneID -->
+Biomin_broc_Pcomp <- Biomin_broc %>% filter(grepl("compressa",Gene_spB)) %>% dplyr::rename(Pcomp_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct()
 
-<!-- merged_data <- Biomin_genes %>% -->
+write.csv(Biomin_broc_Pcomp, file="../annotation/biomineralization/Pcomp_Biomin_Spis_ortholog.csv")
 
-<!--   inner_join(Biomin_blast_results, by = c("accessionnumber/geneID" = "V1")) %>% dplyr::rename("Pocillopora_acuta_best_hit" = "V2") %>% mutate(List="Biomin_Genes") -->
+Biomin_broc_Mcap <- Biomin_broc %>% filter(grepl("capitata",Gene_spB)) %>% dplyr::rename(Mcap_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct()
 
-<!-- write.csv(merged_data, "genes_of_interest/Pacuta_Biomin_Blast.csv", row.names = F) -->
+write.csv(Biomin_broc_Mcap, file="../annotation/biomineralization/Mcap_Biomin_Spis_ortholog.csv")
+```
 
-<!-- ``` -->
+Below are some additional things I looked into with this list
 
-<!-- #### Biomineralization list based on ortholog analysis -->
+``` r
+broc_groups <- data.table::fread("../references/cnidarian_orthologs/broccoli/dir_step3/table_OGs_protein_names.txt", header=T)
+broc_unclassified <- data.table::fread("../references/cnidarian_orthologs/broccoli/dir_step3/unclassified_proteins.txt", header=T)
 
-<!-- ```{r} -->
+broc_groups_Spis <- broc_groups %>% select(c(`#OG_name`,Spis_proteins.faa))  %>% filter(Spis_proteins.faa != "") %>% dplyr::rename(OG_name = "#OG_name")
+broc_groups_Spis_sep <- broc_groups_Spis %>% separate_longer_delim(cols = Spis_proteins.faa, delim = " ")
+broc_groups_Spis_sep <- broc_groups_Spis_sep %>% dplyr::rename(query = Spis_proteins.faa)
 
-<!-- Biomin_Spis <- read_xlsx("input_lists/biomineralization/Biomineralization_Toolkit_FScucchia.xlsx")  %>% clean_names() -->
+broc_groups_Pacu <- broc_groups %>% select(c(`#OG_name`,Pacu_proteins.faa))  %>% filter(Pacu_proteins.faa != "") %>% dplyr::rename(OG_name = "#OG_name")
+broc_groups_Pacu_sep <- broc_groups_Pacu %>% separate_longer_delim(cols = Pacu_proteins.faa, delim = " ")
+broc_groups_Pacu_sep <- broc_groups_Pacu_sep %>% dplyr::rename(query = Pacu_proteins.faa)
 
-<!-- Biomin_Spis <- Biomin_Spis %>%  separate_longer_delim(blasted_protein_in_stylophora, delim=",") %>%  -->
+Biomin_broc_groups <- Biomin_Spis %>%
+    left_join(broc_groups_Spis_sep, by = c("blasted_protein_in_stylophora"="query"))
 
-<!--       mutate(blasted_protein_in_stylophora=str_squish(blasted_protein_in_stylophora))  -->
+Biomin_broc_groups_Pacu <- Biomin_broc_groups %>%
+    left_join(broc_groups_Pacu_sep, by = "OG_name")
 
-<!-- length(unique(Biomin_Spis$blasted_protein_in_stylophora)) -->
+Biomin_broc_Pacuta <- Biomin_broc_groups_Pacu %>% filter(grepl("acuta",query)) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes")
 
-<!-- Biomin_broc <- Biomin_Spis %>%  -->
+write.csv(Biomin_broc_Pacuta, file="../annotation/biomineralization/Pacuta_Biomin_Spis_orthogroups.csv")
+```
 
-<!--     left_join(broc_pairs_clean, by = c("blasted_protein_in_stylophora"="Gene_spA")) %>% -->
+``` r
+name <- "Spis"
 
-<!--     bind_rows( -->
+print(paste0(name," number of unique gene ids in gene of interest list:"))
+print(length(unique(Biomin_Spis$blasted_protein_in_stylophora)))
 
-<!--       Biomin_Spis %>% left_join(broc_pairs_clean, by = c("blasted_protein_in_stylophora"="Gene_spB")) %>% -->
+print(paste0(name," matches of gene id to broccoli protein names:"))
+print(length(unique(union(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs$Gene_spA),intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs$Gene_spB)))))
 
-<!--         dplyr::rename(Gene_spB = Gene_spA)) -->
+print(paste0(name," matches of gene id to *unclassified* broccoli protein names:"))
+print(length(unique(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_unclassified$V1))))
 
-<!-- ``` -->
+print(paste0(name," unnacounted for (in broc groups only?):"))
+length(unique(Biomin_Spis$blasted_protein_in_stylophora)) -
+  (length(unique(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_unclassified$V1))) + length(unique(union(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs$Gene_spA),intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs$Gene_spB)))))
 
-<!-- ```{r} -->
+setdiff(unique(Biomin_Spis$blasted_protein_in_stylophora),
+        union(
+          unique(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_unclassified$V1)),
+          unique(union(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs$Gene_spA),
+                       intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs$Gene_spB)))))
 
-<!-- broc_groups <- data.table::fread("cnidarian_marker_genes/output/broccoli/dir_step3/table_OGs_protein_names.txt", header=T) -->
+# one protein that has actually been removed from the Spis genome on ncbi due to contamination: XP_022803894.1
+```
 
-<!-- broc_groups_Spis <- broc_groups %>% select(c(`#OG_name`,Spis_proteins.faa))  %>% filter(Spis_proteins.faa != "") %>% dplyr::rename(OG_name = "#OG_name") -->
+``` r
+Biomin_broc_Pacuta_temp <- Biomin_broc %>% filter(grepl("acuta",Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB)
 
-<!-- broc_groups_Spis_sep <- broc_groups_Spis %>% separate_longer_delim(cols = Spis_proteins.faa, delim = " ") -->
+length(unique(Biomin_broc_Pacuta_temp$blasted_protein_in_stylophora))
+#98 of the 119 proteins with broccoli orthologs had Pacuta orthologs
 
-<!-- broc_groups_Spis_sep <- broc_groups_Spis_sep %>% dplyr::rename(query = Spis_proteins.faa) -->
+# which ones did not:
 
-<!-- broc_groups_Pacu <- broc_groups %>% select(c(`#OG_name`,Pacu_proteins.faa))  %>% filter(Pacu_proteins.faa != "") %>% dplyr::rename(OG_name = "#OG_name") -->
+Biomin_Spis %>% filter(blasted_protein_in_stylophora %in% setdiff(unique(Biomin_Spis$blasted_protein_in_stylophora),unique(Biomin_broc_Pacuta_temp$blasted_protein_in_stylophora)))
 
-<!-- broc_groups_Pacu_sep <- broc_groups_Pacu %>% separate_longer_delim(cols = Pacu_proteins.faa, delim = " ") -->
-
-<!-- broc_groups_Pacu_sep <- broc_groups_Pacu_sep %>% dplyr::rename(query = Pacu_proteins.faa) -->
-
-<!-- Biomin_broc_groups <- Biomin_Spis %>%  -->
-
-<!--     left_join(broc_groups_Spis_sep, by = c("blasted_protein_in_stylophora"="query")) -->
-
-<!-- Biomin_broc_groups_Pacu <- Biomin_broc_groups %>%  -->
-
-<!--     left_join(broc_groups_Pacu_sep, by = "OG_name") -->
-
-<!-- Biomin_broc_Pacuta <- Biomin_broc_groups_Pacu %>% filter(grepl("acuta",query)) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes") -->
-
-<!-- write.csv(Biomin_broc_Pacuta, file="genes_of_interest/Pacuta_Biomin_Spis_orthogroups.csv") -->
-
-<!-- ``` -->
-
-<!-- ```{r} -->
-
-<!-- name <- "Spis" -->
-
-<!-- print(paste0(name," number of unique gene ids in gene of interest list:")) -->
-
-<!-- print(length(unique(Biomin_Spis$blasted_protein_in_stylophora))) -->
-
-<!-- print(paste0(name," matches of gene id to broccoli protein names:")) -->
-
-<!-- print(length(unique(union(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spA),intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spB))))) -->
-
-<!-- print(paste0(name," matches of gene id to *unclassified* broccoli protein names:")) -->
-
-<!-- print(length(unique(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_unclassified$V1)))) -->
-
-<!-- print(paste0(name," unnacounted for (in broc groups only?):")) -->
-
-<!-- length(unique(Biomin_Spis$blasted_protein_in_stylophora)) - -->
-
-<!--   (length(unique(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_unclassified$V1))) + length(unique(union(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spA),intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spB))))) -->
-
-<!-- setdiff(unique(Biomin_Spis$blasted_protein_in_stylophora), -->
-
-<!--         union( -->
-
-<!--           unique(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_unclassified$V1)), -->
-
-<!--           unique(union(intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spA), -->
-
-<!--                        intersect(Biomin_Spis$blasted_protein_in_stylophora,broc_pairs_clean$Gene_spB))))) -->
-
-<!-- # one protein that has actually been removed from the Spis genome on ncbi due to contamination: XP_022803894.1 -->
-
-<!-- ``` -->
-
-<!-- ```{r} -->
-
-<!-- Biomin_broc_Pacuta_temp <- Biomin_broc %>% filter(grepl("acuta",Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB) -->
-
-<!-- length(unique(Biomin_broc_Pacuta_temp$blasted_protein_in_stylophora)) -->
-
-<!-- #98 of the 119 proteins with broccoli orthologs had Pacuta orthologs -->
-
-<!-- # which ones did not: -->
-
-<!-- Biomin_Spis %>% filter(blasted_protein_in_stylophora %in% setdiff(unique(Biomin_Spis$blasted_protein_in_stylophora),unique(Biomin_broc_Pacuta_temp$blasted_protein_in_stylophora))) -->
-
-<!-- Biomin_Spis %>% filter(blasted_protein_in_stylophora %in% setdiff(unique(Biomin_Spis$blasted_protein_in_stylophora),unique(Biomin_broc_Pacuta_temp$blasted_protein_in_stylophora))) %>% pull(definition) %>% unique() -->
-
-<!-- ``` -->
-
-<!-- ```{r} -->
-
-<!-- Biomin_broc_Pacuta <- Biomin_broc %>% filter(grepl("acuta",Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes") -->
-
-<!-- write.csv(Biomin_broc_Pacuta, file="genes_of_interest/Pacuta_Biomin_Spis_ortholog.csv") -->
-
-<!-- Biomin_broc_Pdam<- Biomin_broc %>% filter(grepl("XP_027",Gene_spB)) %>% dplyr::rename(Pdam_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes") -->
-
-<!-- write.csv(Biomin_broc_Pdam, file="genes_of_interest/Pdam_Biomin_Spis_ortholog.csv") -->
-
-<!-- Biomin_broc_Pcomp <- Biomin_broc %>% filter(grepl("compressa",Gene_spB)) %>% dplyr::rename(Pcomp_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() -->
-
-<!-- write.csv(Biomin_broc_Pcomp, file="genes_of_interest/Pcomp_Biomin_Spis_ortholog.csv") -->
-
-<!-- Biomin_broc_Mcap <- Biomin_broc %>% filter(grepl("capitata",Gene_spB)) %>% dplyr::rename(Mcap_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() -->
-
-<!-- write.csv(Biomin_broc_Mcap, file="genes_of_interest/Mcap_Biomin_Spis_ortholog.csv") -->
-
-<!-- ``` -->
+Biomin_Spis %>% filter(blasted_protein_in_stylophora %in% setdiff(unique(Biomin_Spis$blasted_protein_in_stylophora),unique(Biomin_broc_Pacuta_temp$blasted_protein_in_stylophora))) %>% pull(definition) %>% unique()
+```
 
 ### Heat Stress Genes
 
