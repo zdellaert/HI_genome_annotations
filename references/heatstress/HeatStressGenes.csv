@@ -35,7 +35,7 @@ Type1,Innate immunity,TRAF3,TNF receptor-associated factor 3,Edia,AIPGENE14887,3
 Type1,Innate immunity,IRF8,Interferon regulatory factor 8,Edia,AIPGENE1568,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type1,ROS response,Nrf1,Nuclear factor erythroid 2-related factor 1,Edia,AIPGENE8449,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type1,UPR,Calu,Calumenin-B,Edia,AIPGENE9938,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
-Type1,Innate immunity,TNFRSF27,TNF receptor superfamily member 27,Edia,AIPGENE27609,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
+Type1,Innate immunity,TNFR27,TNF receptor superfamily member 27,Edia,AIPGENE27609,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type1,UPR,Hsc71,Heat shock cognate 71 kDa protein,Edia,AIPGENE21738,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type1,UPR,HSP70,Heat shock 70 kDa protein 1A,Edia,AIPGENE18790,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type1,UPR,HSP70,Heat shock 70 kDa protein,Edia,AIPGENE8387,3hr,NA,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
@@ -57,7 +57,6 @@ Type2,Extracellular matrix,NID-2,Nidogen-2,Edia,AIPGENE11248,NA,3hr,1st timepoin
 Type2,Extracellular matrix,VIT,Vitrin,Edia,AIPGENE6809,NA,3hr,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type2,Immunity and stress,ST1C2,Sulfotransferase 1C2A,Edia,AIPGENE20198,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
 Type2,Immunity and stress,SRB1,Scavenger receptor class B member 1,Edia,AIPGENE25617,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
-Type2,Immunity and stress,TNFR27,Tumor necrosis factor receptor superfamily member 27,Edia,AIPGENE27690,NA,12hr,NA,Cleves,10.1073/pnas.2015737117
 Type2,Immunity and stress,TGFa,Protransforming growth factor alpha,Edia,AIPGENE894,NA,3hr,1st timepoint after T0,Cleves,10.1073/pnas.2015737117
 Type2,Anabolic glutamate synthesis,GS,glutamine synthetase,Spis,XP_022787072,NA,day10,1st timepoint after T0;pre-bleach,Rädecker,10.1073/pnas.2022653118
 Type2,Anabolic glutamate synthesis,GOGAT,glutamate synthase,Spis,XP_022791525,NA,day10,1st timepoint after T0;pre-bleach,Rädecker,10.1073/pnas.2022653118
