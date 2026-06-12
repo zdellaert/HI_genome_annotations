@@ -1,0 +1,16 @@
+#species	perc_prot_assigned nb_prot_assigned
+Amur_proteins.faa	182.2	41615
+Apoc_proteins.faa	98.8	40406
+Edia_proteins.faa	96.8	25261
+Nvec_proteins.faa	119.4	26534
+Acer_proteins.faa	123.1	28009
+Hvul_proteins.faa	68.3	21728
+Xesp_proteins.faa	83.3	20494
+Mcap_proteins.faa	105.8	47958
+Spis_proteins.faa	133.9	31882
+Pcom_proteins.faa	98.1	38500
+Hsym_proteins.faa	139.6	24240
+Ahya_proteins.faa	123.8	32376
+Pacu_proteins.faa	102.1	30913
+Ofav_proteins.faa	105.2	29981
+Pdam_proteins.faa	125.1	24979

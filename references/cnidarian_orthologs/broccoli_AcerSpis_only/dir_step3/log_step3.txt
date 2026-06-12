@@ -1,0 +1,34 @@
+#network size:
+38083 nodes
+47494 edges
+
+
+#edge_weight	nb_edges
+0.0	0
+0.05	744
+0.1	1099
+0.15	1474
+0.2	2103
+0.25	1771
+0.3	1628
+0.35	1979
+0.4	2479
+0.45	1515
+0.5	3412
+0.55	1283
+0.6	2155
+0.65	4249
+0.7	1132
+0.75	2907
+0.8	2251
+0.85	2074
+0.9	1673
+0.95	171
+1.0	57954
+
+-> 1152 edges removed
+
+#network analysis:
+14111 connected components
+14662 communities
+0 chimeric proteins

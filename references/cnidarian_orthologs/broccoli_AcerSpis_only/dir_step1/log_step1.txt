@@ -1,0 +1,3 @@
+#index	file_name	nb_initial	nb_final
+0	Spis_proteins.faa	32879	23805
+1	Acer_proteins.faa	28721	22760

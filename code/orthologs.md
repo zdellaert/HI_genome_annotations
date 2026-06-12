@@ -33,10 +33,15 @@ species <- c("Mcap","Pacuta","Pcomp")
         10.3389/fmars.2025.1551763)
     8.  Stylophora (Levy et al., 2021; 10.1016/j.cell.2021.04.005)
     9.  Xenia (Hu et al., 2020; 10.1038/s41586-020-2385-7)
-    10. ***Pocillopora acuta***
-    11. ***Porites compressa***
-    12. ***Montipora capitata***
-    13. To add: Acropora muricata, Acropora cervicornis
+    10. Acropora cervicornis assembled by Metz et al., 2026
+        (10.1038/s41597-026-07499-3)
+    11. Acropora hyacinthus assembled by Metz et al., 2026
+        (10.1038/s41597-026-07499-3)
+    12. Acropora muricata, assembled by He et al., 2024 (Preprint)
+        (10.21203/rs.3.rs-4037544/v1)
+    13. ***Pocillopora acuta***
+    14. ***Porites compressa***
+    15. ***Montipora capitata***
 
 ### Step 1: Aquire genome protein fasta sequences
 
@@ -72,6 +77,15 @@ wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/571/385/GCF_002571385.2_St
 # 9 - Xenia, assembled by Hu et al., 2020 (10.1038/s41586-020-2385-7)
 wget https://cmo.carnegiescience.edu/endosymbiosis/genome/xenSp1.proteins.fa
 
+# 10 - Acropora cervicornis assembled by Metz et al., 2026 (10.1038/s41597-026-07499-3)
+wget -O jaAcrCerv1_Acropora_cervicornis.proteins.aa.gz https://github.com/Aquatic-Symbiosis-Genomics-Project/coral-genomes-annotation/raw/refs/heads/main/results/jaAcrCerv1_Acropora_cervicornis/braker.aa.gz
+
+# 11 - Acropora hyacinthus assembled by Metz et al., 2026 (10.1038/s41597-026-07499-3)
+wget -O jaAcrHyac4_Acropora_hyacinthus.proteins.aa.gz https://github.com/Aquatic-Symbiosis-Genomics-Project/coral-genomes-annotation/raw/refs/heads/main/results/jaAcrHyac4_Acropora_hyacinthus/braker.aa.gz
+
+# 12 - Acropora muricata, assembled by He et al., 2024 (Preprint) (10.21203/rs.3.rs-4037544/v1)
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/036/669/905/GCF_036669905.1_ASM3666990v1/GCF_036669905.1_ASM3666990v1_protein.faa.gz
+
 # Pocillopora acuta, assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
 wget http://cyanophora.rutgers.edu/Pocillopora_acuta/Pocillopora_acuta_HIv2.genes.pep.faa.gz
 
@@ -92,6 +106,9 @@ mv Orbicella_faveolata_gen_17.proteins.fa Ofav_proteins.faa
 mv GCF_003704095.1_ASM370409v1_protein.faa Pdam_proteins.faa
 mv GCF_002571385.2_Stylophora_pistillata_v1.1_protein.faa Spis_proteins.faa
 mv xenSp1.proteins.fa Xesp_proteins.faa
+mv jaAcrCerv1_Acropora_cervicornis.proteins.aa Acer_proteins.faa
+mv jaAcrHyac4_Acropora_hyacinthus.proteins.aa Ahya_proteins.faa
+mv GCF_036669905.1_ASM3666990v1_protein.faa Amur_proteins.faa
 mv Pocillopora_acuta_HIv2.genes.pep.faa Pacu_proteins.faa
 mv Porites_compressa_HIv1.genes.pep.faa Pcom_proteins.faa
 mv Montipora_capitata_HIv3.genes.pep.faa Mcap_proteins.faa
@@ -108,9 +125,27 @@ for reference: *file_shortname*
     Pdam_proteins.faa
     Spis_proteins.faa
     Xesp_proteins.faa
+    Acer_proteins.faa
+    Ahya_proteins.faa
+    Amur_proteins.faa
     Pacu_proteins.faa
     Pcom_proteins.faa
     Mcap_proteins.faa
+
+The *Acropora* genomes downloaded from the same authors (Sanger
+Institute) have duplicate gene IDs across files, so I needed to append
+the species name to the fasta headers
+
+``` bash
+mv Acer_proteins.faa Acer_proteins_orig.faa
+mv Ahya_proteins.faa Ahya_proteins_orig.faa
+
+sed 's/^>/&Acer_/' Acer_proteins_orig.faa > Acer_proteins.faa
+sed 's/^>/&Ahya_/' Ahya_proteins_orig.faa > Ahya_proteins.faa
+
+rm Acer_proteins_orig.faa 
+rm Ahya_proteins_orig.faa 
+```
 
 ### Step 2: Running broccoli on 12 cnidarian genomes
 
@@ -187,8 +222,10 @@ python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -phylogenies 'ml' -ext
 ### Step 3. Load in results from ortholog analyses
 
 ``` r
-broc_pairs <- data.table::fread("../references/cnidarian_orthologs/broccoli/dir_step4/orthologous_pairs.txt", header=F)
+broc_pairs <- data.table::fread("../references/cnidarian_orthologs/broccoli_wAcropora/dir_step4/orthologous_pairs.txt", header=F)
 colnames(broc_pairs) <- c("Gene_spA","Gene_spB")
+broc_pairs_2sp <- data.table::fread("../references/cnidarian_orthologs/broccoli_AcerSpis_only/dir_step4/orthologous_pairs.txt", header=F)
+colnames(broc_pairs_2sp) <- c("Gene_spA","Gene_spB")
 ```
 
 ### Step 4. Process to keep only these three species
@@ -231,7 +268,7 @@ g <- graph_from_data_frame(edges, directed = FALSE)
 summary(g)
 ```
 
-    ## IGRAPH 1b7ae72 UN-- 105700 299849 -- 
+    ## IGRAPH dfa2c4c UN-- 105446 278418 -- 
     ## + attr: name (v/c)
 
 ``` r
@@ -259,7 +296,7 @@ cat("\nOrthogroups built from pairs:", n_distinct(gene_to_og$OG))
 ```
 
     ## 
-    ## Orthogroups built from pairs: 19009
+    ## Orthogroups built from pairs: 19408
 
 #### Get summary info for each orthogroup created
 
@@ -298,9 +335,9 @@ ortho_pairs_final %>%
     ## # Groups:   species [3]
     ##   species n_rows_per_gene unique_genes
     ##   <chr>             <int>        <int>
-    ## 1 Mcap                  1        42992
-    ## 2 Pacuta                1        27568
-    ## 3 Pcomp                 1        35140
+    ## 1 Mcap                  1        42530
+    ## 2 Pacuta                1        27639
+    ## 3 Pcomp                 1        35277
 
 #### Species-level summaries of orthogroups:
 
@@ -325,9 +362,9 @@ ortho_pairs_final %>%
     ## # A tibble: 3 × 6
     ##   species n_genes n_in_all_3 pct_in_all_3 n_1to1to1 pct_1to1to1
     ##   <chr>     <int>      <int>        <dbl>     <int>       <dbl>
-    ## 1 Mcap      42992      32767         76.2      8889        20.7
-    ## 2 Pacuta    27568      23038         83.6      8889        32.2
-    ## 3 Pcomp     35140      26674         75.9      8889        25.3
+    ## 1 Mcap      42530      31092         73.1      8753        20.6
+    ## 2 Pacuta    27639      22874         82.8      8753        31.7
+    ## 3 Pcomp     35277      26211         74.3      8753        24.8
 
 ``` r
 write.csv(ortho_pairs_final, 
@@ -417,6 +454,42 @@ write.csv(Biomin_broc_Pcomp, file="../annotation/biomineralization/Pcomp_Biomin_
 Biomin_broc_Mcap <- Biomin_broc %>% filter(grepl("capitata",Gene_spB)) %>% dplyr::rename(Mcap_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct()
 
 write.csv(Biomin_broc_Mcap, file="../annotation/biomineralization/Mcap_Biomin_Spis_ortholog.csv")
+```
+
+Acropora cervicornis:
+
+``` r
+Biomin_broc_Acer <- Biomin_broc %>% filter(grepl("Acer_",Gene_spB)) %>% dplyr::rename(Acer_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes")
+
+write.csv(Biomin_broc_Acer, file="../annotation/biomineralization/Acer_Biomin_Spis_ortholog.csv")
+
+Biomin_broc_Acer_2spbroccoli <- Biomin_Spis %>%
+    left_join(broc_pairs_2sp, by = c("blasted_protein_in_stylophora"="Gene_spA")) %>%
+    bind_rows(
+      Biomin_Spis %>% left_join(broc_pairs_2sp, by = c("blasted_protein_in_stylophora"="Gene_spB")) %>%
+        dplyr::rename(Gene_spB = Gene_spA)) %>% filter(grepl("Acer_",Gene_spB)) %>% dplyr::rename(Acer_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes")
+
+write.csv(Biomin_broc_Acer_2spbroccoli, file="../annotation/biomineralization/Acer_2sp_Biomin_Spis_ortholog.csv")
+```
+
+``` r
+Biomin_broc_Acer_unique_gene <- Biomin_broc_Acer %>%
+   mutate(Acer_gene = str_remove(Acer_gene, "\\.t\\d")) %>%
+  group_by(Acer_gene,List) %>%
+  summarize(definition = paste(unique(definition), collapse = ","),
+            Reference = paste(unique(ref), collapse = ","),
+            Original_Accession = paste(unique(accessionnumber_gene_id), collapse = ",")) 
+
+write.csv(Biomin_broc_Acer_unique_gene, file="../annotation/biomineralization/Acer_Biomin_Spis_ortholog_collapsed.csv")
+
+Biomin_broc_Acer_2sp_unique_gene <- Biomin_broc_Acer_2spbroccoli %>%
+  mutate(Acer_gene = str_remove(Acer_gene, "\\.t\\d")) %>%
+  group_by(Acer_gene,List) %>%
+  summarize(definition = paste(unique(definition), collapse = ","),
+            Reference = paste(unique(ref), collapse = ","),
+            Original_Accession = paste(unique(accessionnumber_gene_id), collapse = ",")) 
+
+write.csv(Biomin_broc_Acer_2sp_unique_gene, file="../annotation/biomineralization/Acer_2sp_Biomin_Spis_ortholog_collapsed.csv")
 ```
 
 Below are some additional things I looked into with this list
@@ -510,22 +583,12 @@ stress_genes_man <- stress_genes_man %>% filter(!is.na(species_gene_ID))
 ``` r
 stress_genes <- stress_genes_man %>% separate_rows(species_gene_ID,sep =";") %>% filter(!is.na(species_gene_ID))
 
-unique(stress_genes$species)
-```
-
-    ## [1] "Pdam" "Ahya" "Spis" "Edia"
-
-``` r
-#remove ahya genes until acropora genome is incorporated into orthologs
-stress_genes <- stress_genes %>% filter(species!="Ahya")
-unique(stress_genes$species)
-```
-
-    ## [1] "Pdam" "Spis" "Edia"
-
-``` r
 ## clean gene IDs for Spis, only need to add .1 to the end of all the species_gene_ID - this is the format of the broc IDs
 stress_genes_Spis <- stress_genes %>% filter(species=="Spis")  %>%
+  mutate(protein_id = paste0(species_gene_ID,".1"))
+
+## clean gene IDs for Ahya, only need to add .1 to the end of all the species_gene_ID - this is the format of the broc IDs
+stress_genes_Ahya <- stress_genes %>% filter(species=="Ahya")  %>%
   mutate(protein_id = paste0(species_gene_ID,".1"))
 
 ## make protein_id column for the Edia + Pdam genes, which already have their IDs in the right format
@@ -536,7 +599,7 @@ stress_genes_Edia <- stress_genes %>% filter(species=="Edia")  %>%
   mutate(protein_id = species_gene_ID)
 
 ## combine and merge with broccoli orthologs
-stress_genes_final <- rbind(stress_genes_Pdam,stress_genes_Spis,stress_genes_Edia)
+stress_genes_final <- rbind(stress_genes_Pdam,stress_genes_Spis,stress_genes_Edia,stress_genes_Ahya)
 
 stress_broc <- stress_genes_final %>%
     left_join(broc_pairs, by = c("protein_id"="Gene_spA")) %>%
@@ -584,176 +647,133 @@ NEED_TO_FIND_GENE_ID %>% arrange(gene_id)
 stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Pacuta$gene_id,] %>% arrange(gene_id)
 ```
 
-    ##    response_type                     category gene_id
-    ## 1          Type2         Extracellular matrix    ACAN
-    ## 2          Type1              Innate immunity    AP-1
-    ## 3          Type2             Lipid metabolism   Alox5
-    ## 4          Type1                          UPR    Calu
-    ## 5          Type1                    Apoptosis   Casp7
-    ## 6          Type1 Stress transcription factors   Elk-3
-    ## 7          Type1 Stress transcription factors    FosB
-    ## 8          Type1              Innate immunity    IRF8
-    ## 9          Type2             Lipid metabolism    PLA2
-    ## 10         Type2          Immunity and stress    SRB1
-    ## 11         Type1              Innate immunity   TRAF3
-    ## 12         Type2         Extracellular matrix     VIT
-    ##                              gene_name species           species_gene_ID
-    ## 1                Aggrecan core protein    Edia              AIPGENE11251
-    ## 2        Transcription factor AP-1/Jun    Ahya              XP_067018442
-    ## 3          Arachidonate 5-lipoxygenase    Edia              AIPGENE21881
-    ## 4                          Calumenin-B    Edia               AIPGENE9938
-    ## 5                            Caspase-7    Edia               AIPGENE3163
-    ## 6  ETS domain-containing protein Elk-3    Ahya XP_067039494;XP_067025821
-    ## 7                                 FosB    Ahya              XP_067052902
-    ## 8       Interferon regulatory factor 8    Edia               AIPGENE1568
-    ## 9                     Phospholipase A2    Edia              AIPGENE11619
-    ## 10 Scavenger receptor class B member 1    Edia              AIPGENE25617
-    ## 11    TNF receptor-associated factor 3    Edia              AIPGENE14887
-    ## 12                              Vitrin    Edia               AIPGENE6809
-    ##    key_timepoint_upregulation key_timepoint_downregulation
-    ## 1                        <NA>                          3hr
-    ## 2                         3hr                         <NA>
-    ## 3                        <NA>                          3hr
-    ## 4                         3hr                         <NA>
-    ## 5                         3hr                         <NA>
-    ## 6                         4hr                         <NA>
-    ## 7                         4hr                         <NA>
-    ## 8                         3hr                         <NA>
-    ## 9                        <NA>                         12hr
-    ## 10                       <NA>                         12hr
-    ## 11                        3hr                         <NA>
-    ## 12                       <NA>                          3hr
-    ##           timepoint_notes ref_first_author               reference
-    ## 1  1st timepoint after T0           Cleves 10.1073/pnas.2015737117
-    ## 2                    <NA>  Traylor Knowles          10.1086/692717
-    ## 3  1st timepoint after T0           Cleves 10.1073/pnas.2015737117
-    ## 4  1st timepoint after T0           Cleves 10.1073/pnas.2015737117
-    ## 5  1st timepoint after T0           Cleves 10.1073/pnas.2015737117
-    ## 6                    <NA>  Traylor Knowles          10.1086/692717
-    ## 7                    <NA>  Traylor Knowles          10.1086/692717
-    ## 8  1st timepoint after T0           Cleves 10.1073/pnas.2015737117
-    ## 9                    <NA>           Cleves 10.1073/pnas.2015737117
-    ## 10                   <NA>           Cleves 10.1073/pnas.2015737117
-    ## 11 1st timepoint after T0           Cleves 10.1073/pnas.2015737117
-    ## 12 1st timepoint after T0           Cleves 10.1073/pnas.2015737117
+    ##   response_type             category gene_id
+    ## 1         Type2     Lipid metabolism ALOX12B
+    ## 2         Type2     Lipid metabolism   Alox5
+    ## 3         Type1                  UPR    Calu
+    ## 4         Type1            Apoptosis   Casp7
+    ## 5         Type2     Lipid metabolism    PLA2
+    ## 6         Type1      Innate immunity   TRAF3
+    ## 7         Type2 Extracellular matrix     VIT
+    ## 8         Type1            Apoptosis    mTOR
+    ##                                gene_name species species_gene_ID
+    ## 1 Arachidonate 12-lipoxygenase, 12R-type    Edia    AIPGENE21885
+    ## 2            Arachidonate 5-lipoxygenase    Edia    AIPGENE21881
+    ## 3                            Calumenin-B    Edia     AIPGENE9938
+    ## 4                              Caspase-7    Edia     AIPGENE3163
+    ## 5                       Phospholipase A2    Edia    AIPGENE11619
+    ## 6       TNF receptor-associated factor 3    Edia    AIPGENE14887
+    ## 7                                 Vitrin    Edia     AIPGENE6809
+    ## 8                                   mTOR    Pdam  XP_027052994.1
+    ##   key_timepoint_upregulation key_timepoint_downregulation
+    ## 1                       <NA>                          3hr
+    ## 2                       <NA>                          3hr
+    ## 3                        3hr                         <NA>
+    ## 4                        3hr                         <NA>
+    ## 5                       <NA>                         12hr
+    ## 6                        3hr                         <NA>
+    ## 7                       <NA>                          3hr
+    ## 8                       <NA>                         <NA>
+    ##          timepoint_notes ref_first_author                  reference
+    ## 1 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ## 2 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ## 3 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ## 4 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ## 5                   <NA>           Cleves    10.1073/pnas.2015737117
+    ## 6 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ## 7 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ## 8                   <NA>         Majerova 10.1038/s42003-025-08671-y
 
 ``` r
 stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Pcomp$gene_id,] %>% arrange(gene_id)
 ```
 
-    ##    response_type                     category gene_id
-    ## 1          Type1              Innate immunity    AP-1
-    ## 2          Type1                          UPR    Calu
-    ## 3          Type1 Stress transcription factors   Elk-3
-    ## 4          Type1 Stress transcription factors    FosB
-    ## 5          Type1                 ROS response    HO-1
-    ## 6          Type1              Innate immunity    IRF8
-    ## 7          Type2             Lipid metabolism    PLA2
-    ## 8          Type1                 ROS response     SOD
-    ## 9          Type2          Immunity and stress    SRB1
-    ## 10         Type2          Immunity and stress    TGFa
-    ## 11         Type1              Innate immunity   TRAF3
-    ##                              gene_name species
-    ## 1        Transcription factor AP-1/Jun    Ahya
-    ## 2                          Calumenin-B    Edia
-    ## 3  ETS domain-containing protein Elk-3    Ahya
-    ## 4                                 FosB    Ahya
-    ## 5                     Heme oxygenase 1    Pdam
-    ## 6       Interferon regulatory factor 8    Edia
-    ## 7                     Phospholipase A2    Edia
-    ## 8                 Superoxide dismutase    Pdam
-    ## 9  Scavenger receptor class B member 1    Edia
-    ## 10 Protransforming growth factor alpha    Edia
-    ## 11    TNF receptor-associated factor 3    Edia
-    ##                                                               species_gene_ID
-    ## 1                                                                XP_067018442
-    ## 2                                                                 AIPGENE9938
-    ## 3                                                   XP_067039494;XP_067025821
-    ## 4                                                                XP_067052902
-    ## 5                                                              XP_027042110.1
-    ## 6                                                                 AIPGENE1568
-    ## 7                                                                AIPGENE11619
-    ## 8  XP_027056263.1;XP_027056265.1;XP_027056266.1;XP_027049096.1;XP_027049101.1
-    ## 9                                                                AIPGENE25617
-    ## 10                                                                 AIPGENE894
-    ## 11                                                               AIPGENE14887
-    ##    key_timepoint_upregulation key_timepoint_downregulation
-    ## 1                         3hr                         <NA>
-    ## 2                         3hr                         <NA>
-    ## 3                         4hr                         <NA>
-    ## 4                         4hr                         <NA>
-    ## 5                        <NA>                         <NA>
-    ## 6                         3hr                         <NA>
-    ## 7                        <NA>                         12hr
-    ## 8                        <NA>                         <NA>
-    ## 9                        <NA>                         12hr
-    ## 10                       <NA>                          3hr
-    ## 11                        3hr                         <NA>
-    ##           timepoint_notes ref_first_author                  reference
-    ## 1                    <NA>  Traylor Knowles             10.1086/692717
-    ## 2  1st timepoint after T0           Cleves    10.1073/pnas.2015737117
-    ## 3                    <NA>  Traylor Knowles             10.1086/692717
-    ## 4                    <NA>  Traylor Knowles             10.1086/692717
-    ## 5                    <NA>         Majerova 10.1038/s42003-025-08671-y
-    ## 6  1st timepoint after T0           Cleves    10.1073/pnas.2015737117
-    ## 7                    <NA>           Cleves    10.1073/pnas.2015737117
-    ## 8                    <NA>             <NA>                       <NA>
-    ## 9                    <NA>           Cleves    10.1073/pnas.2015737117
-    ## 10 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
-    ## 11 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ##   response_type             category gene_id
+    ## 1         Type2 Extracellular matrix    ACAN
+    ## 2         Type2     Lipid metabolism ALOX12B
+    ## 3         Type2     Lipid metabolism   Alox5
+    ## 4         Type1                  UPR    Calu
+    ## 5         Type2     Lipid metabolism    PLA2
+    ## 6         Type1         ROS response     SOD
+    ## 7         Type1      Innate immunity   TRAF3
+    ## 8         Type2 Extracellular matrix     VIT
+    ##                                gene_name species
+    ## 1                  Aggrecan core protein    Edia
+    ## 2 Arachidonate 12-lipoxygenase, 12R-type    Edia
+    ## 3            Arachidonate 5-lipoxygenase    Edia
+    ## 4                            Calumenin-B    Edia
+    ## 5                       Phospholipase A2    Edia
+    ## 6                   Superoxide dismutase    Pdam
+    ## 7       TNF receptor-associated factor 3    Edia
+    ## 8                                 Vitrin    Edia
+    ##                                                              species_gene_ID
+    ## 1                                                               AIPGENE11251
+    ## 2                                                               AIPGENE21885
+    ## 3                                                               AIPGENE21881
+    ## 4                                                                AIPGENE9938
+    ## 5                                                               AIPGENE11619
+    ## 6 XP_027056263.1;XP_027056265.1;XP_027056266.1;XP_027049096.1;XP_027049101.1
+    ## 7                                                               AIPGENE14887
+    ## 8                                                                AIPGENE6809
+    ##   key_timepoint_upregulation key_timepoint_downregulation
+    ## 1                       <NA>                          3hr
+    ## 2                       <NA>                          3hr
+    ## 3                       <NA>                          3hr
+    ## 4                        3hr                         <NA>
+    ## 5                       <NA>                         12hr
+    ## 6                       <NA>                         <NA>
+    ## 7                        3hr                         <NA>
+    ## 8                       <NA>                          3hr
+    ##          timepoint_notes ref_first_author               reference
+    ## 1 1st timepoint after T0           Cleves 10.1073/pnas.2015737117
+    ## 2 1st timepoint after T0           Cleves 10.1073/pnas.2015737117
+    ## 3 1st timepoint after T0           Cleves 10.1073/pnas.2015737117
+    ## 4 1st timepoint after T0           Cleves 10.1073/pnas.2015737117
+    ## 5                   <NA>           Cleves 10.1073/pnas.2015737117
+    ## 6                   <NA>             <NA>                    <NA>
+    ## 7 1st timepoint after T0           Cleves 10.1073/pnas.2015737117
+    ## 8 1st timepoint after T0           Cleves 10.1073/pnas.2015737117
 
 ``` r
 stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Mcap$gene_id,] %>% arrange(gene_id)
 ```
 
-    ##    response_type                     category gene_id
-    ## 1          Type1              Innate immunity    AP-1
-    ## 2          Type2             Lipid metabolism   Alox5
-    ## 3          Type1                          UPR    Calu
-    ## 4          Type1                    Apoptosis   Casp7
-    ## 5          Type1 Stress transcription factors   Elk-3
-    ## 6          Type1 Stress transcription factors    FosB
-    ## 7          Type1                 ROS response    HO-1
-    ## 8          Type1              Innate immunity    IRF8
-    ## 9          Type2             Lipid metabolism    PLA2
-    ## 10         Type2          Immunity and stress    SRB1
-    ## 11         Type1              Innate immunity   TRAF3
-    ##                              gene_name species           species_gene_ID
-    ## 1        Transcription factor AP-1/Jun    Ahya              XP_067018442
-    ## 2          Arachidonate 5-lipoxygenase    Edia              AIPGENE21881
-    ## 3                          Calumenin-B    Edia               AIPGENE9938
-    ## 4                            Caspase-7    Edia               AIPGENE3163
-    ## 5  ETS domain-containing protein Elk-3    Ahya XP_067039494;XP_067025821
-    ## 6                                 FosB    Ahya              XP_067052902
-    ## 7                     Heme oxygenase 1    Pdam            XP_027042110.1
-    ## 8       Interferon regulatory factor 8    Edia               AIPGENE1568
-    ## 9                     Phospholipase A2    Edia              AIPGENE11619
-    ## 10 Scavenger receptor class B member 1    Edia              AIPGENE25617
-    ## 11    TNF receptor-associated factor 3    Edia              AIPGENE14887
-    ##    key_timepoint_upregulation key_timepoint_downregulation
-    ## 1                         3hr                         <NA>
-    ## 2                        <NA>                          3hr
-    ## 3                         3hr                         <NA>
-    ## 4                         3hr                         <NA>
-    ## 5                         4hr                         <NA>
-    ## 6                         4hr                         <NA>
-    ## 7                        <NA>                         <NA>
-    ## 8                         3hr                         <NA>
-    ## 9                        <NA>                         12hr
-    ## 10                       <NA>                         12hr
-    ## 11                        3hr                         <NA>
-    ##           timepoint_notes ref_first_author                  reference
-    ## 1                    <NA>  Traylor Knowles             10.1086/692717
-    ## 2  1st timepoint after T0           Cleves    10.1073/pnas.2015737117
-    ## 3  1st timepoint after T0           Cleves    10.1073/pnas.2015737117
-    ## 4  1st timepoint after T0           Cleves    10.1073/pnas.2015737117
-    ## 5                    <NA>  Traylor Knowles             10.1086/692717
-    ## 6                    <NA>  Traylor Knowles             10.1086/692717
-    ## 7                    <NA>         Majerova 10.1038/s42003-025-08671-y
-    ## 8  1st timepoint after T0           Cleves    10.1073/pnas.2015737117
-    ## 9                    <NA>           Cleves    10.1073/pnas.2015737117
-    ## 10                   <NA>           Cleves    10.1073/pnas.2015737117
-    ## 11 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ##   response_type            category gene_id
+    ## 1         Type2    Lipid metabolism ALOX12B
+    ## 2         Type2    Lipid metabolism   Alox5
+    ## 3         Type1                 UPR    Calu
+    ## 4         Type1           Apoptosis   Casp7
+    ## 5         Type1        ROS response    HO-1
+    ## 6         Type2    Lipid metabolism    PLA2
+    ## 7         Type2 Immunity and stress    SRB1
+    ## 8         Type1     Innate immunity   TRAF3
+    ##                                gene_name species species_gene_ID
+    ## 1 Arachidonate 12-lipoxygenase, 12R-type    Edia    AIPGENE21885
+    ## 2            Arachidonate 5-lipoxygenase    Edia    AIPGENE21881
+    ## 3                            Calumenin-B    Edia     AIPGENE9938
+    ## 4                              Caspase-7    Edia     AIPGENE3163
+    ## 5                       Heme oxygenase 1    Pdam  XP_027042110.1
+    ## 6                       Phospholipase A2    Edia    AIPGENE11619
+    ## 7    Scavenger receptor class B member 1    Edia    AIPGENE25617
+    ## 8       TNF receptor-associated factor 3    Edia    AIPGENE14887
+    ##   key_timepoint_upregulation key_timepoint_downregulation
+    ## 1                       <NA>                          3hr
+    ## 2                       <NA>                          3hr
+    ## 3                        3hr                         <NA>
+    ## 4                        3hr                         <NA>
+    ## 5                       <NA>                         <NA>
+    ## 6                       <NA>                         12hr
+    ## 7                       <NA>                         12hr
+    ## 8                        3hr                         <NA>
+    ##          timepoint_notes ref_first_author                  reference
+    ## 1 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ## 2 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ## 3 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ## 4 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
+    ## 5                   <NA>         Majerova 10.1038/s42003-025-08671-y
+    ## 6                   <NA>           Cleves    10.1073/pnas.2015737117
+    ## 7                   <NA>           Cleves    10.1073/pnas.2015737117
+    ## 8 1st timepoint after T0           Cleves    10.1073/pnas.2015737117
 
 ### Draft: Adding additional genes to heat stress list based on swissprot annotations
 
@@ -830,6 +850,250 @@ for_natalie_added <- for_natalie_added %>%
 
 write.csv(for_natalie_added, file = "../annotation/heatstress/NC_HeatStress_Genes.csv",row.names = FALSE, quote = FALSE)
 ```
+
+<!-- ### HOX & WNT genes -->
+
+<!-- Find orthologs in the P. acuta genome to Nematostella hox genes, based on <https://doi.org/10.1016/j.cub.2023.05.044>: -->
+
+<!-- | Gene_Name | Description             | NV2_ID | -->
+
+<!-- |-----------|-------------------------------------------------|-----------------| -->
+
+<!-- | Alx4     | Homeobox protein aristaless-like 4              | NV2g017442000.1 | -->
+
+<!-- | Anthox1  | Homeobox protein Anthox1                        | NV2g017961000.1 | -->
+
+<!-- | Anthox1a | Homeobox protein Anthox1a                       | NV2g012279000.1 | -->
+
+<!-- | Anthox6a | Homeobox protein Anthox6a                       | NV2g011327000.1 | -->
+
+<!-- | Anthox7  | Homeobox protein Anthox7                        | NV2g012004000.1 | -->
+
+<!-- | Anthox8a | Homeobox protein Anthox8a                       | NV2g012007000.1 | -->
+
+<!-- | Anthox8b | Homeobox protein Anthox8b                       | NV2g012008000.1 | -->
+
+<!-- | B-H1     | Homeobox protein B-H1                           | NV2g025278000.1 | -->
+
+<!-- | Dlx      | Homeobox protein Dlx                            | NV2g014640000.1 | -->
+
+<!-- | Dmbx1    | Diencephalon/mesencephalon homeobox protein 1   | NV2g003591000.1 | -->
+
+<!-- | Dmbx4    | Diencephalon/mesencephalon homeobox protein 1-B | NV2g003592000.1 | -->
+
+<!-- | Dmbx5    | Diencephalon/mesencephalon homeobox protein 1-B | NV2g003593000.1 | -->
+
+<!-- | Emx      | Homeobox protein EMX1                           | NV2g018403000.1 | -->
+
+<!-- | Gbx      | Gastrulation brain homeodomain                  | NV2g011380000.1 | -->
+
+<!-- | Gsc      | Homeobox protein goosecoid                      | NV2g010922000.1 | -->
+
+<!-- | MoxB     | Homeobox protein Mox1                           | NV2g012940000.1 | -->
+
+<!-- | MoxC     | Homeobox protein Mox1                           | NV2g012942000.1 | -->
+
+<!-- | MoxD     | Homeobox protein Mox1                           | NV2g012943000.1 | -->
+
+<!-- | Msx1     | Homeobox protein MSX-1                          | NV2g012247000.1 | -->
+
+<!-- | Nkx2.2a1 | Homeobox protein Nkx-2.2a                       | NV2g011134000.1 | -->
+
+<!-- | Nkx2.2a2 | Homeobox protein Nkx-2.2a                       | NV2g011262000.1 | -->
+
+<!-- | Nkx2.8   | Homeobox protein Nkx-2.8                        | NV2g011132000.1 | -->
+
+<!-- | Nkx3.2   | Homeobox protein Nkx-3.2                        | NV2g018723000.1 | -->
+
+<!-- | OtxA     | Homeobox protein OTX1                           | NV2g012793000.1 | -->
+
+<!-- | OtxB     | Homeobox protein OTX1 B                         | NV2g012795000.1 | -->
+
+<!-- | OtxC     | Homeobox protein OTX1                           | NV2g012799000.1 | -->
+
+<!-- | Six4/5   | Homeobox protein SIX4/5                         | NV2g010728000.1 | -->
+
+<!-- | Tlx      | T-cell leukemia homeobox protein 2              | NV2g011935000.1 | -->
+
+<!-- | Uncx     | Homeobox protein unc-4 homolog                  | NV2g006849000.1 | -->
+
+<!-- | Cdx      | HoxB3-like                                      | NV2g030001000.1 | -->
+
+<!-- | Lbx      | Transcription factor LBX2                       | NV2g017667000.1 | -->
+
+<!-- | Gene Name | Protein annotation                               | Gene ID (NV2)   | Gene ID (UVienna)  | -->
+
+<!-- |-----------|--------------------------------------------------|-----------------|--------------------| -->
+
+<!-- | Alx4      | Homeobox protein aristaless-like 4               | NV2g017442000.1 | NVE1403            | -->
+
+<!-- | Anthox1   | Homeobox protein Anthox1                         | NV2g017961000.1 | NVE16373           | -->
+
+<!-- | Anthox1a  | Homeobox protein Anthox1a                        | NV2g012279000.1 | NVE12998           | -->
+
+<!-- | Anthox6a  | Homeobox protein Anthox6a                        | NV2g011327000.1 | NVE11345           | -->
+
+<!-- | Anthox7   | Homeobox protein Anthox7                         | NV2g012004000.1 | NVE21278           | -->
+
+<!-- | Anthox8a  | Homeobox protein Anthox8a                        | NV2g012007000.1 | NVE21156           | -->
+
+<!-- | Anthox8b  | Homeobox protein Anthox8b                        | NV2g012008000.1 | NVE21279           | -->
+
+<!-- | B-H1      | Homeobox protein B-H1                            | NV2g025278000.1 | NVE18480           | -->
+
+<!-- | Bra(TbxT) | Brachyury/T-box transcription factor T homolog 1 | NV2g010624000.1 | NVE3568            | -->
+
+<!-- | Cdx       | HoxB3-like                                       | NV2g030001000.1 |                    | -->
+
+<!-- | Dlx       | Homeobox protein Dlx                             | NV2g014640000.1 | NVE8363            | -->
+
+<!-- | Dmbx1     | Diencephalon/mesencephalon homeobox protein 1    | NV2g003591000.1 | NVE1803            | -->
+
+<!-- | Dmbx4     | Diencephalon/mesencephalon homeobox protein 1-B  | NV2g003592000.1 | NVE1799            | -->
+
+<!-- | Dmbx5     | Diencephalon/mesencephalon homeobox protein 1-B  | NV2g003593000.1 | NVE1797            | -->
+
+<!-- | Emx       | Homeobox protein EMX1                            | NV2g018403000.1 | NVE4528            | -->
+
+<!-- | FoxA      | Forkhead box protein A2                          | NV2g011441000.1 | NVE20630           | -->
+
+<!-- | FoxQ1     | Forkhead box protein Q1                          | NV2g004570000.1 | NVE10869           | -->
+
+<!-- | Gbx       | Gastrulation brain homeodomain                   | NV2g011380000.1 | NVE20684           | -->
+
+<!-- | Gsc       | Homeobox protein goosecoid                       | NV2g010922000.1 | NVE19762           | -->
+
+<!-- | Lbx       | Transcription factor LBX2                        | NV2g017667000.1 | NVE20146           | -->
+
+<!-- | MoxB      | Homeobox protein Mox1                            | NV2g012940000.1 | NVE10742           | -->
+
+<!-- | MoxC      | Homeobox protein Mox1                            | NV2g012942000.1 | NVE10743           | -->
+
+<!-- | MoxD      | Homeobox protein Mox1                            | NV2g012943000.1 | NVE10744           | -->
+
+<!-- | Msx1      | Homeobox protein MSX-1                           | NV2g012247000.1 | NVE12977           | -->
+
+<!-- | Nkx2.2a1  | Homeobox protein Nkx-2.2a                        | NV2g011134000.1 | NVE10557           | -->
+
+<!-- | Nkx2.2a2  | Homeobox protein Nkx-2.2a                        | NV2g011262000.1 | NVE11289           | -->
+
+<!-- | Nkx2.8    | Homeobox protein Nkx-2.8                         | NV2g011132000.1 | NVE10555           | -->
+
+<!-- | Nkx3.2    | Homeobox protein Nkx-3.2                         | NV2g018723000.1 | NVE24919           | -->
+
+<!-- | OtxA      | Homeobox protein OTX1                            | NV2g012793000.1 | NVE7117            | -->
+
+<!-- | OtxB      | Homeobox protein OTX1 B                          | NV2g012795000.1 | NVE7116            | -->
+
+<!-- | OtxC      | Homeobox protein OTX1                            | NV2g012799000.1 | NVE7115            | -->
+
+<!-- | Six4/5    | Homeobox protein SIX4/5                          | NV2g010728000.1 | NVE17554           | -->
+
+<!-- | Tlx       | T-cell leukemia homeobox protein 2               | NV2g011935000.1 | NVE21231           | -->
+
+<!-- | Uncx      | Homeobox protein unc-4 homolog                   | NV2g006849000.1 | NVE7609            | -->
+
+<!-- | Wnt4a     | Protein Wnt-4a                                   | NV2g022664000.1 | NVE3111            | -->
+
+<!-- | Wnt5      | Protein Wnt-5a                                   | NV2g003611000.1 | NVE1780, NVE20298  | -->
+
+<!-- | Wntless   | Protein wntless homolog B                        | NV2g001854000.1 | NVE20439, NVE23246 | -->
+
+<!-- ```{r} -->
+
+<!-- He_etal_genes <- read.csv("input_lists/NV_He_etal2023.csv", header = TRUE) -->
+
+<!-- colnames(He_etal_genes) <- c("Gene_Name", "Description", "NV2_ID", "UVienna_ID") -->
+
+<!-- He_etal_genes <- He_etal_genes %>% separate_rows(NV2_ID, sep = " ") %>% -->
+
+<!--                     #change gene name prefix and remove any leading zeros before gene number -->
+
+<!--                      mutate(NV2_ID_clean = str_replace(NV2_ID,"NV2g0*","NV2.")) %>%  -->
+
+<!--                     #remove 00X.1 transcript ID not present in gene ids -->
+
+<!--                      mutate(NV2_ID_clean = str_remove(NV2_ID_clean, "\\d\\d\\d\\.\\d"))  -->
+
+<!-- He_etal_broc <- He_etal_genes %>%  -->
+
+<!--     left_join(broc_pairs_clean, by = c("NV2_ID_clean"="Gene_spA")) %>% -->
+
+<!--     bind_rows( -->
+
+<!--       He_etal_genes %>% left_join(broc_pairs_clean, by = c("NV2_ID_clean"="Gene_spB")) %>% -->
+
+<!--         dplyr::rename(Gene_spB = Gene_spA)) %>% distinct() -->
+
+<!-- He_etal_broc_Pacuta <- He_etal_broc %>% filter(grepl("acuta",Gene_spB)) %>% select(c(Gene_Name,Description,Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB) -->
+
+<!-- write.csv(He_etal_broc_Pacuta, file="genes_of_interest/He_etal_nematostella.csv") -->
+
+<!-- ``` -->
+
+<!-- #### Aboral/Oral Wnt Nematostella genes -->
+
+<!-- Find orthologs in the P. acuta genome to Nematostella wnt genes and other genes downstream of hox that show oral/aboral patterning, based on DuBuc et al 2018, <10.1038/s41467-018-04184-x>: -->
+
+<!-- | Gene Name, DuBuc et al 2018 | Gene Name, Cole et al 2024 | Protein annotation      | -->
+
+<!-- |-----------------------------|----------------------------|-------------------------| -->
+
+<!-- | SnailA                      | SnailA                     | oral marker DuBuc2018   | -->
+
+<!-- | FoxA                        | FoxA                       | oral marker DuBuc2018   | -->
+
+<!-- | Brachyury                   | Brachyury                  | oral marker DuBuc2018   | -->
+
+<!-- | WntA                        | WntA                       | oral marker DuBuc2018   | -->
+
+<!-- | Wnt1                        | Wnt1                       | oral marker DuBuc2018   | -->
+
+<!-- | Wnt3                        | Wnt3                       | oral marker DuBuc2018   | -->
+
+<!-- | Wnt4                        | Wnt4                       | oral marker DuBuc2018   | -->
+
+<!-- | Wnt2                        | Wnt2                       | oral marker DuBuc2018   | -->
+
+<!-- | Fgf2A                       | FGFa2                      | aboral marker DuBuc2018 | -->
+
+<!-- | Sfrp1/5                     | Sfrp1/5                    | aboral marker DuBuc2018 | -->
+
+<!-- | Dkk1/2/4                    | Dickkopf-like              | aboral marker DuBuc2018 | -->
+
+<!-- | Six3/6                      | Six3/6                     | aboral marker DuBuc2018 | -->
+
+<!-- ```{r} -->
+
+<!-- Wnt_genes <- read.csv("input_lists/NV_DuBuc_etal2018.csv", header = TRUE) -->
+
+<!-- colnames(Wnt_genes) <- c("Gene_Name", "Gene_Name_Cole", "Description") -->
+
+<!-- #fix slashes to be dashes -->
+
+<!-- Wnt_genes$Gene_Name_Cole <- gsub("\\/", "-", Wnt_genes$Gene_Name_Cole) -->
+
+<!-- Nvec_names_mod <- Nvec_names -->
+
+<!-- Nvec_names_mod$gene.name <- gsub("\\/", "-", Nvec_names$gene.name) -->
+
+<!-- Wnt_genes <- Wnt_genes %>% left_join(Nvec_names_mod, by = c("Gene_Name_Cole"="gene.name")) -->
+
+<!-- Wnt_broc <- Wnt_genes %>%  -->
+
+<!--     left_join(broc_pairs_clean, by = c("geneID"="Gene_spA")) %>% -->
+
+<!--     bind_rows( -->
+
+<!--       Wnt_genes %>% left_join(broc_pairs_clean, by = c("geneID"="Gene_spB")) %>% -->
+
+<!--         dplyr::rename(Gene_spB = Gene_spA)) -->
+
+<!-- Wnt_broc_Pacuta <- Wnt_broc %>% filter(grepl("acuta",Gene_spB)) %>% select(c(Gene_Name,Description,Gene_spB)) %>% dplyr::rename(Pacuta_gene=Gene_spB) -->
+
+<!-- write.csv(Wnt_broc_Pacuta, file="genes_of_interest/Wnt_nematostella.csv") -->
+
+<!-- ``` -->
 
 ## Appendix: Program installations
 
