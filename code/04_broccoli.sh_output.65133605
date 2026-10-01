@@ -15,3 +15,20 @@
 
  # kmer clustering
  19 proteomes on 24 threads
+ -> 574095 proteins saved for the next step
+
+
+ --- STEP 2: phylomes
+
+ # parameters
+ e_value     : 0.001
+ nb_hits     : 6
+ gaps        : 0.7
+ phylogenies : neighbor joining
+ threads     : 24
+
+ # check input files
+ 19 input fasta files
+ 574095 sequences
+
+ # build phylomes ... be patient
