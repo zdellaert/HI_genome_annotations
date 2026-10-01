@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #SBATCH --export=NONE
-#SBATCH --ntasks=1 --cpus-per-task=8 #split one task over multiple CPU
-#SBATCH --mem=50GB
-#SBATCH -p cpu-preempt
-#SBATCH -t 48:00:00
+#SBATCH --ntasks=1 --cpus-per-task=24 #split one task over multiple CPU
+#SBATCH --mem=200GB
+#SBATCH -p uri-cpu,cpu
+#SBATCH -t 96:00:00 -q long
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80 #email you when job stops and/or fails or is nearing its time limit
 #SBATCH --error="%x_error.%j" #if your job fails, the error report will be put in this file
 #SBATCH --output="%x_output.%j" #once your job is completed, any final job report comments will be put in this file
@@ -20,4 +20,4 @@ module load all/FastTree/2.1.11-GCCcore-12.3.0
 mkdir -p ../references/cnidarian_orthologs/broccoli/
 
 cd ../references/cnidarian_orthologs/broccoli/
-python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -ext '.faa' -path_fasttree FastTree -threads 8
+python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -ext '.faa' -path_fasttree FastTree -threads 24

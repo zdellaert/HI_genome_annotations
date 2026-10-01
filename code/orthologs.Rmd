@@ -31,19 +31,22 @@ species <- c("Mcap","Pacuta","Pcomp")
     1.  Aiptasia (Cui et al., 2023; 10.1126/sciadv.adf7108)
     2.  Hydra (Siebert et al., 2019; 10.1126/science.aav9314)
     3.  Hydractinia (Salamanca-Díaz et al., 2025; 10.1038/s41467-025-57168-z)
-    4.  Nematostella (Cole et al., 2024;10.1186/s12983-024-00529-z)
+    4.  Nematostella (Cole et al., 2024; 10.1186/s12983-024-00529-z)
     5.  Astrangia (used to map Oculina data by Valadez-Ingersoll et al., 2024; 10.1101/2024.06.20.599951)
     6.  Orbicella (del Campo et al., 2024; 10.21203/rs.3.rs-5397639/v1)
     7.  Pocillopora damicornis (Diao et al., 2025; 10.3389/fmars.2025.1551763)
     8.  Stylophora (Levy et al., 2021; 10.1016/j.cell.2021.04.005)
     9.  Xenia (Hu et al., 2020; 10.1038/s41586-020-2385-7)
-    10. Acropora cervicornis assembled by Metz et al., 2026 (10.1038/s41597-026-07499-3)
-    11. Acropora hyacinthus assembled by Metz et al., 2026 (10.1038/s41597-026-07499-3)
-    12. Acropora muricata, assembled by He et al., 2024 (Preprint) (10.21203/rs.3.rs-4037544/v1)
-    13. ***Pocillopora acuta***
-    14. ***Porites compressa***
-    15. ***Montipora capitata***
-    
+    10. Acropora cervicornis (Metz et al., 2026; 10.1038/s41597-026-07499-3)
+    11. Acropora hyacinthus (Metz et al., 2026; 10.1038/s41597-026-07499-3)
+    12. Acropora muricata, (He et al., 2024 (Preprint); 10.21203/rs.3.rs-4037544/v1)
+    13. Acropora millepora, (Fuller et al., 2020; 10.1126/science.aba4674)
+    14. Porites lutea (Metz et al., 2026; 10.1038/s41597-026-07499-3)
+    15. Montipora capitata (Metz et al., 2026; 10.1038/s41597-026-07499-3)
+    14. ***Pocillopora acuta*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
+    15. ***Porites compressa*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
+    16. ***Montipora capitata*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
+
 ### Step 1: Aquire genome protein fasta sequences
 
 ```{bash, eval=FALSE}
@@ -78,14 +81,29 @@ wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/571/385/GCF_002571385.2_St
 # 9 - Xenia, assembled by Hu et al., 2020 (10.1038/s41586-020-2385-7)
 wget https://cmo.carnegiescience.edu/endosymbiosis/genome/xenSp1.proteins.fa
 
-# 10 - Acropora cervicornis assembled by Metz et al., 2026 (10.1038/s41597-026-07499-3)
-wget -O jaAcrCerv1_Acropora_cervicornis.proteins.aa.gz https://github.com/Aquatic-Symbiosis-Genomics-Project/coral-genomes-annotation/raw/refs/heads/main/results/jaAcrCerv1_Acropora_cervicornis/braker.aa.gz
+# 10 - Acropora cervicornis, assembled by the Wellcome Sanger Institute Aquatic Symbiosis Genomics Project - Metz et al., 2026 (10.1038/s41597-026-07499-3)
+wget -O Acer_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Acropora_cervicornis/GCA_964034985.1/ensembl/geneset/2025_04/pep.fa.gz
 
-# 11 - Acropora hyacinthus assembled by Metz et al., 2026 (10.1038/s41597-026-07499-3)
-wget -O jaAcrHyac4_Acropora_hyacinthus.proteins.aa.gz https://github.com/Aquatic-Symbiosis-Genomics-Project/coral-genomes-annotation/raw/refs/heads/main/results/jaAcrHyac4_Acropora_hyacinthus/braker.aa.gz
+# 11 - Acropora hyacinthus, assembled by the Wellcome Sanger Institute Aquatic Symbiosis Genomics Project - Metz et al., 2026 (10.1038/s41597-026-07499-3)
+wget -O Ahya_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Acropora_hyacinthus/GCA_964291705.1/ensembl/geneset/2025_03/pep.fa.gz
 
 # 12 - Acropora muricata, assembled by He et al., 2024 (Preprint) (10.21203/rs.3.rs-4037544/v1)
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/036/669/905/GCF_036669905.1_ASM3666990v1/GCF_036669905.1_ASM3666990v1_protein.faa.gz
+
+# 13 - Acropora millepora, assembled by Fuller et al., 2020 (10.1126/science.aba4674)
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/013/753/865/GCF_013753865.1_Amil_v2.1/GCF_013753865.1_Amil_v2.1_protein.faa.gz
+
+# 14 - Porites lutea (jaPorLute2.1), assembled by the Wellcome Sanger Institute Aquatic Symbiosis Genomics Project - Metz et al., 2026 (10.1038/s41597-026-07499-3)
+wget -O Plut_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Porites_lutea/GCA_958299795.1/ensembl/geneset/2023_11/pep.fa.gz
+
+# 15 - Porites lobata (jaPorLoba17.1), assembled by the Wellcome Sanger Institute Aquatic Symbiosis Genomics Project - Metz et al., 2026 (10.1038/s41597-026-07499-3)
+wget -O Plob_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Porites_lobata/GCA_942486035.1/ensembl/geneset/2023_10/pep.fa.gz
+
+# 16 - Montipora capitata - ASG (jaMonCapi2.1), assembled by the Wellcome Sanger Institute Aquatic Symbiosis Genomics Project - Metz et al., 2026 (10.1038/s41597-026-07499-3)
+wget -O McapASG_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Montipora_capitata/GCA_949126865.1/ensembl/geneset/2023_10/pep.fa.gz
+
+# 17 - Pocillopora damicornis - ASG (jaPocDami1.2), assembled by the Wellcome Sanger Institute Aquatic Symbiosis Genomics Project - Metz et al., 2026 (10.1038/s41597-026-07499-3)
+wget -O PdamASG_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Pocillopora_damicornis/GCF_003704095.1/refseq/geneset/2021_11/pep.fa.gz
 
 # Pocillopora acuta, assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
 wget http://cyanophora.rutgers.edu/Pocillopora_acuta/Pocillopora_acuta_HIv2.genes.pep.faa.gz
@@ -96,7 +114,7 @@ wget http://cyanophora.rutgers.edu/porites_compressa/Porites_compressa_HIv1.gene
 # Montipora capitata, assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
 wget http://cyanophora.rutgers.edu/montipora/Montipora_capitata_HIv3.genes.pep.faa.gz
 
-gunzip *
+gunzip *.gz
 
 mv aiptasia_genome.proteins.fa Edia_proteins.faa
 mv hydra2.0_genemodels.aa Hvul_proteins.faa
@@ -107,8 +125,7 @@ mv Orbicella_faveolata_gen_17.proteins.fa Ofav_proteins.faa
 mv GCF_003704095.1_ASM370409v1_protein.faa Pdam_proteins.faa
 mv GCF_002571385.2_Stylophora_pistillata_v1.1_protein.faa Spis_proteins.faa
 mv xenSp1.proteins.fa Xesp_proteins.faa
-mv jaAcrCerv1_Acropora_cervicornis.proteins.aa Acer_proteins.faa
-mv jaAcrHyac4_Acropora_hyacinthus.proteins.aa Ahya_proteins.faa
+mv GCF_013753865.1_Amil_v2.1_protein.faa Amil_proteins.faa
 mv GCF_036669905.1_ASM3666990v1_protein.faa Amur_proteins.faa
 mv Pocillopora_acuta_HIv2.genes.pep.faa Pacu_proteins.faa
 mv Porites_compressa_HIv1.genes.pep.faa Pcom_proteins.faa
@@ -118,37 +135,29 @@ mv Montipora_capitata_HIv3.genes.pep.faa Mcap_proteins.faa
 for reference: *file_shortname*
 
 ```
-Edia_proteins.faa
-Hvul_proteins.faa
-Hsym_proteins.faa
-Nvec_proteins.faa
-Apoc_proteins.faa
-Ofav_proteins.faa
-Pdam_proteins.faa
-Spis_proteins.faa
-Xesp_proteins.faa
 Acer_proteins.faa
 Ahya_proteins.faa
+Amil_proteins.faa
 Amur_proteins.faa
+Apoc_proteins.faa
+Edia_proteins.faa
+Hsym_proteins.faa
+Hvul_proteins.faa
+McapASG_proteins.faa
+Mcap_proteins.faa
+Nvec_proteins.faa
+Ofav_proteins.faa
 Pacu_proteins.faa
 Pcom_proteins.faa
-Mcap_proteins.faa
+Pdam_proteins.faa
+PdamASG_proteins.faa
+Plob_proteins.faa
+Plut_proteins.faa
+Spis_proteins.faa
+Xesp_proteins.faa
 ```
 
-The *Acropora* genomes downloaded from the same authors (Sanger Institute) have duplicate gene IDs across files, so I needed to append the species name to the fasta headers 
-
-```{bash, eval = FALSE}
-mv Acer_proteins.faa Acer_proteins_orig.faa
-mv Ahya_proteins.faa Ahya_proteins_orig.faa
-
-sed 's/^>/&Acer_/' Acer_proteins_orig.faa > Acer_proteins.faa
-sed 's/^>/&Ahya_/' Ahya_proteins_orig.faa > Ahya_proteins.faa
-
-rm Acer_proteins_orig.faa 
-rm Ahya_proteins_orig.faa 
-```
-
-### Step 2: Running broccoli on 12 cnidarian genomes
+### Step 2: Running broccoli on 20 cnidarian genomes
 
 ```{bash, eval = FALSE}
 # from Rmd directory (HI_genome_annotations/code/)
@@ -158,9 +167,9 @@ nano 04_broccoli.sh
 ```{bash, eval = FALSE}
 #!/usr/bin/env bash
 #SBATCH --export=NONE
-#SBATCH --ntasks=1 --cpus-per-task=20 #split one task over multiple CPU
+#SBATCH --ntasks=1 --cpus-per-task=24 #split one task over multiple CPU
 #SBATCH --mem=500GB
-#SBATCH -p cpu-preempt
+#SBATCH -p cpu, uri-cpu
 #SBATCH -t 48:00:00
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80 #email you when job stops and/or fails or is nearing its time limit
 #SBATCH --error="%x_error.%j" #if your job fails, the error report will be put in this file
@@ -178,7 +187,7 @@ module load all/FastTree/2.1.11-GCCcore-12.3.0
 mkdir -p ../references/cnidarian_orthologs/broccoli/
 
 cd ../references/cnidarian_orthologs/broccoli/
-python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -ext '.faa' -path_fasttree FastTree -threads 8
+python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -ext '.faa' -path_fasttree FastTree -threads 24
 ```
 
 #### broccoli v2 - maximum likelihood analysis (takes longer, more accurate)

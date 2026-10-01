@@ -263,17 +263,6 @@ Based on [Bhattacharya et al 2016](https://doi.org/10.7554/eLife.13288) elife-13
 
 [NCBI Fasta Download](https://github.com/kblin/ncbi-acc-download)
 
-```{bash, eval=FALSE}
-pip install ncbi-acc-download
-
-mkdir human_channels
-cd human_channels
-
-ncbi-acc-download --molecule protein --format fasta #HUMAN ACCESSION NUMBERS HERE
-
-cat * > sensing_protein_seqs.fasta
-```
-
 #### I am actually going to use this FASTA file from Hollie: `../references/calcium_membrane_transport/sensing_protein_seqs.fasta`
 
 #### Step 2: Create BLAST protein database for each coral species from protein fasta file
