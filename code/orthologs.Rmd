@@ -102,9 +102,6 @@ wget -O Plob_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Porites_
 # 16 - Montipora capitata - ASG (jaMonCapi2.1), assembled by the Wellcome Sanger Institute Aquatic Symbiosis Genomics Project - Metz et al., 2026 (10.1038/s41597-026-07499-3)
 wget -O McapASG_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Montipora_capitata/GCA_949126865.1/ensembl/geneset/2023_10/pep.fa.gz
 
-# 17 - Pocillopora damicornis - ASG (jaPocDami1.2), assembled by the Wellcome Sanger Institute Aquatic Symbiosis Genomics Project - Metz et al., 2026 (10.1038/s41597-026-07499-3)
-wget -O PdamASG_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Pocillopora_damicornis/GCF_003704095.1/refseq/geneset/2021_11/pep.fa.gz
-
 # Pocillopora acuta, assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
 wget http://cyanophora.rutgers.edu/Pocillopora_acuta/Pocillopora_acuta_HIv2.genes.pep.faa.gz
 

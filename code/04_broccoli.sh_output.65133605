@@ -1,0 +1,17 @@
+
+            Broccoli v1.3
+
+
+ --- STEP 1: kmer clustering
+
+ # parameters
+ input dir     : ../../cnidarian_protein_fastas
+ kmer size     : 100
+ kmer nb aa    : 15
+
+ # check input files
+ 19 input files
+ 792329 sequences
+
+ # kmer clustering
+ 19 proteomes on 24 threads
