@@ -32,3 +32,50 @@
  574095 sequences
 
  # build phylomes ... be patient
+ done
+
+
+ --- STEP 3: network analysis
+
+ ## parameters
+ species overlap  : 0.5
+ min edge weight  : 0.1
+ min nb hits      : 2
+ chimeric edges   : 0.5
+ chimeric species : 3
+ threads          : 24
+
+ ## get ortho and para
+ extract ortho from similarity
+ extract ortho from trees
+ remove ortho found only once
+ extract para from trees
+
+ ## network analysis
+ build network:
+      _ 532664 nodes
+      _ 19086746 edges
+ load similarity search outputs
+ compute lcc for each node
+ apply LPA and corrections:
+      _ 15037 connected components
+      _ 28785 communities
+      _ 1902 chimeric proteins
+      _ 5311 spurious hits removed
+
+
+ --- STEP 4: orthologous pairs
+
+ ## parameters
+ ratio ortho  : 0.5
+ not same sp  : False
+ threads      : 24
+
+ ## load data
+ load NO tree results
+ load tree results
+ load OGs
+
+ ## analyse 20998 orthologous groups 1 by 1
+ done
+

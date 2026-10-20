@@ -42,10 +42,11 @@ species <- c("Mcap","Pacuta","Pcomp")
     12. Acropora muricata, (He et al., 2024 (Preprint); 10.21203/rs.3.rs-4037544/v1)
     13. Acropora millepora, (Fuller et al., 2020; 10.1126/science.aba4674)
     14. Porites lutea (Metz et al., 2026; 10.1038/s41597-026-07499-3)
-    15. Montipora capitata (Metz et al., 2026; 10.1038/s41597-026-07499-3)
-    14. ***Pocillopora acuta*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
-    15. ***Porites compressa*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
-    16. ***Montipora capitata*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
+    15. Porites lobata (Metz et al., 2026; 10.1038/s41597-026-07499-3)
+    16. Montipora capitata (Metz et al., 2026; 10.1038/s41597-026-07499-3)
+    17. ***Pocillopora acuta*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
+    18. ***Porites compressa*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
+    19. ***Montipora capitata*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
 
 ### Step 1: Aquire genome protein fasta sequences
 
