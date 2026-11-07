@@ -231,10 +231,8 @@ python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -phylogenies 'ml' -ext
 ### Step 3. Load in results from ortholog analyses
 
 ```{r}
-broc_pairs <- data.table::fread("../references/cnidarian_orthologs/broccoli_wAcropora/dir_step4/orthologous_pairs.txt", header=F)
+broc_pairs <- data.table::fread("../references/cnidarian_orthologs/broccoli_wAcropora//dir_step4/orthologous_pairs.txt", header=F)
 colnames(broc_pairs) <- c("Gene_spA","Gene_spB")
-broc_pairs_2sp <- data.table::fread("../references/cnidarian_orthologs/broccoli_AcerSpis_only/dir_step4/orthologous_pairs.txt", header=F)
-colnames(broc_pairs_2sp) <- c("Gene_spA","Gene_spB")
 ```
 
 ### Step 4. Process to keep only these three species
@@ -425,42 +423,6 @@ write.csv(Biomin_broc_Pcomp, file="../annotation/biomineralization/Pcomp_Biomin_
 Biomin_broc_Mcap <- Biomin_broc %>% filter(grepl("capitata",Gene_spB)) %>% dplyr::rename(Mcap_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct()
 
 write.csv(Biomin_broc_Mcap, file="../annotation/biomineralization/Mcap_Biomin_Spis_ortholog.csv")
-```
-
-Acropora cervicornis:
-
-```{r}
-Biomin_broc_Acer <- Biomin_broc %>% filter(grepl("Acer_",Gene_spB)) %>% dplyr::rename(Acer_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes")
-
-write.csv(Biomin_broc_Acer, file="../annotation/biomineralization/Acer_Biomin_Spis_ortholog.csv")
-
-Biomin_broc_Acer_2spbroccoli <- Biomin_Spis %>%
-    left_join(broc_pairs_2sp, by = c("blasted_protein_in_stylophora"="Gene_spA")) %>%
-    bind_rows(
-      Biomin_Spis %>% left_join(broc_pairs_2sp, by = c("blasted_protein_in_stylophora"="Gene_spB")) %>%
-        dplyr::rename(Gene_spB = Gene_spA)) %>% filter(grepl("Acer_",Gene_spB)) %>% dplyr::rename(Acer_gene=Gene_spB) %>% select(-blasted_protein_in_stylophora) %>% distinct() %>% mutate(List="Biomin_Genes")
-
-write.csv(Biomin_broc_Acer_2spbroccoli, file="../annotation/biomineralization/Acer_2sp_Biomin_Spis_ortholog.csv")
-```
-
-```{r}
-Biomin_broc_Acer_unique_gene <- Biomin_broc_Acer %>%
-   mutate(Acer_gene = str_remove(Acer_gene, "\\.t\\d")) %>%
-  group_by(Acer_gene,List) %>%
-  summarize(definition = paste(unique(definition), collapse = ","),
-            Reference = paste(unique(ref), collapse = ","),
-            Original_Accession = paste(unique(accessionnumber_gene_id), collapse = ",")) 
-
-write.csv(Biomin_broc_Acer_unique_gene, file="../annotation/biomineralization/Acer_Biomin_Spis_ortholog_collapsed.csv")
-
-Biomin_broc_Acer_2sp_unique_gene <- Biomin_broc_Acer_2spbroccoli %>%
-  mutate(Acer_gene = str_remove(Acer_gene, "\\.t\\d")) %>%
-  group_by(Acer_gene,List) %>%
-  summarize(definition = paste(unique(definition), collapse = ","),
-            Reference = paste(unique(ref), collapse = ","),
-            Original_Accession = paste(unique(accessionnumber_gene_id), collapse = ",")) 
-
-write.csv(Biomin_broc_Acer_2sp_unique_gene, file="../annotation/biomineralization/Acer_2sp_Biomin_Spis_ortholog_collapsed.csv")
 ```
 
 Below are some additional things I looked into with this list 
