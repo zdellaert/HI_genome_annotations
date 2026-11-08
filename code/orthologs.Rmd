@@ -76,6 +76,8 @@ wget -O Orbicella_faveolata_gen_17.proteins.fa https://zenodo.org/records/101517
 
 # 7 - Pocillopora damicornis, assembled by Cunning et al., 2018 (10.1038/s41598-018-34459-8)
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/003/704/095/GCF_003704095.1_ASM370409v1/GCF_003704095.1_ASM370409v1_protein.faa.gz
+## reefgenomics version:
+wget -O Pdam_RG_proteins.faa.gz http://pdam.reefgenomics.org/download/pdam_proteins.fasta.gz
 
 # 8 - Stylophora, assembled by Voolstra et al., 2017 (10.1038/s41598-017-17484-x)
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/571/385/GCF_002571385.2_Stylophora_pistillata_v1.1/GCF_002571385.2_Stylophora_pistillata_v1.1_protein.faa.gz
@@ -153,13 +155,14 @@ Pacu_proteins.faa
 Pcom_proteins.faa
 Pdam_proteins.faa
 PdamASG_proteins.faa
+PdamRG_proteins.faa
 Plob_proteins.faa
 Plut_proteins.faa
 Spis_proteins.faa
 Xesp_proteins.faa
 ```
 
-### Step 2: Running broccoli on 20 cnidarian genomes
+### Step 2: Running broccoli on 21 cnidarian genomes
 
 ```{bash, eval = FALSE}
 # from Rmd directory (HI_genome_annotations/code/)

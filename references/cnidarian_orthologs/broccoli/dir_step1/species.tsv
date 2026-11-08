@@ -13,8 +13,9 @@
 12	Pacu_proteins.faa
 13	Pcom_proteins.faa
 14	PdamASG_proteins.faa
-15	Pdam_proteins.faa
-16	Plob_proteins.faa
-17	Plut_proteins.faa
-18	Spis_proteins.faa
-19	Xesp_proteins.faa
+15	Pdam_RG_proteins.faa
+16	Pdam_proteins.faa
+17	Plob_proteins.faa
+18	Plut_proteins.faa
+19	Spis_proteins.faa
+20	Xesp_proteins.faa
