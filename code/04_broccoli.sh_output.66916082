@@ -1,0 +1,46 @@
+
+            Broccoli v2.0.1
+
+ --- STEP 1: k-mer simplification
+ input dir: ../../cnidarian_protein_fastas/
+ output dir: .
+ kmer size: 100
+ kmer nb aa: 15
+ 20 input files
+ 842540 sequences
+ WARNING: some protein names are present multiple times, see dir_step1/duplicate_names.txt
+ -> 601189 proteins saved for the next step
+
+ --- STEP 2: phylomes
+ e_value: 0.001
+ nb_hits: 6
+ gaps: 0.7
+ phylogenies: nj
+ search: combined database
+ build DIAMOND database
+ similarity search and phylomes ... be patient
+ done
+
+ --- STEP 3: network analysis
+ species overlap: 0.5
+ min edge weight: 0.1
+ min nb hits: 2
+ chimeric edges: 0.5
+ chimeric species: 3
+ extract ortho and para
+ network: 555896 nodes, 19064919 edges
+ load similarity search outputs
+ 15773 connected components
+ 30335 communities
+ 1777 chimeric proteins
+ 5698 spurious hits removed
+
+ --- STEP 4: orthologous pairs
+ ratio ortho: 0.5
+ not same sp: false
+ analyse 22178 orthologous groups
+ done
+
+
+            Total runtime: 98 min 56 sec
+

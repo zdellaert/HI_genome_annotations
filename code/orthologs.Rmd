@@ -44,6 +44,7 @@ species <- c("Mcap","Pacuta","Pcomp")
     14. Porites lutea (Metz et al., 2026; 10.1038/s41597-026-07499-3)
     15. Porites lobata (Metz et al., 2026; 10.1038/s41597-026-07499-3)
     16. Montipora capitata (Metz et al., 2026; 10.1038/s41597-026-07499-3)
+    16. Pocillopora damicornis (Metz et al., 2026; 10.1038/s41597-026-07499-3)
     17. ***Pocillopora acuta*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
     18. ***Porites compressa*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
     19. ***Montipora capitata*** - assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
@@ -102,6 +103,9 @@ wget -O Plob_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Porites_
 
 # 16 - Montipora capitata - ASG (jaMonCapi2.1), assembled by the Wellcome Sanger Institute Aquatic Symbiosis Genomics Project - Metz et al., 2026 (10.1038/s41597-026-07499-3)
 wget -O McapASG_proteins.faa.gz https://ftp.ebi.ac.uk/pub/ensemblorganisms/Montipora_capitata/GCA_949126865.1/ensembl/geneset/2023_10/pep.fa.gz
+
+# 17 -Pocillopora damicornis - ASG (jaPocDami1.2), assembled by the Wellcome Sanger Institute Aquatic Symbiosis Genomics Project - Metz et al., 2026 (10.1038/s41597-026-07499-3)
+wget -O PdamASG_proteins.faa.gz https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/964/200/805/GCF_964200805.1_jaPocDami1.2/GCF_964200805.1_jaPocDami1.2_protein.faa.gz
 
 # Pocillopora acuta, assembled by Stephens et al., 2022 (10.1093/gigascience/giac098)
 wget http://cyanophora.rutgers.edu/Pocillopora_acuta/Pocillopora_acuta_HIv2.genes.pep.faa.gz
@@ -778,6 +782,25 @@ write.csv(for_natalie_added, file = "../annotation/heatstress/NC_HeatStress_Gene
 <!-- ``` -->
 
 ## Appendix: Program installations
+
+### Install Broccoli V2 on Unity (Nov 2026)
+
+Set up conda environments and install program
+
+```{bash, eval=FALSE}
+# enter interactive session
+salloc
+
+# load conda
+module load conda/latest
+
+# create and activate environment with broccoli installed from bioconda
+conda create --prefix /work/pi_hputnam_uri_edu/conda/envs/env-broccoli2 -c bioconda -c conda-forge broccoli
+conda activate /work/pi_hputnam_uri_edu/conda/envs/env-broccoli2
+
+# check that the install is sucessful by running the help command
+broccoli --help
+```
 
 ### Install Broccoli on unity
 
