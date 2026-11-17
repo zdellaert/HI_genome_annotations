@@ -3,7 +3,7 @@ title: "Cnidarian Marker Gene Analysis - Updated"
 author: "Zoe Dellaert"
 date: "2026-11-07"
 output:
-  github_document: default
+  github_document:
     toc: true
     toc_depth: 2
     html_preview: false
@@ -424,7 +424,7 @@ print(paste0("Processed file: ", name))
 
 ### Pdam (Pocillopora) - ReefGenomics Version
 
-```{r pdam-clean}
+```{r pdamrg-clean}
 name <- file_names[8] #"Processing file: PdamRG_markers"
 print(paste0("Processing file: ", name))
 
@@ -526,7 +526,7 @@ print(paste0("Processed file: ", name))
 
 ### Amil (Acropora)
 
-```{r spis-clean}
+```{r amil-clean}
 name <- file_names[11] #"Processing file: Amil_markers"
 print(paste0("Processing file: ", name))
 
@@ -934,5 +934,5 @@ Kevin_all <- combined_PdamRG_markers %>%
     filter(grepl("Montipora",protein_id_spB)|
              grepl("Porites",protein_id_spB) | 
            grepl("Pocillopora",protein_id_spB)) 
-write.csv(Kevin_all,paste0(markers_dir, "/output/",paste0("Kevin_Pdam_combined_",file_names[i]),".csv"))
+write.csv(Kevin_all,paste0(markers_dir, "/output/",paste0("Kevin_Pdam_combined"),".csv"))
 ```
