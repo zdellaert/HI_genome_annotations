@@ -4,6 +4,7 @@ references/swissprot/SwissProt-Annot-*.tsv
 references/*tgz
 references/*fasta
 references/*/*faa
+references/*/*/*/*gtf
 references/*gff3
 references/cnidarian_orthologs/broccoli*/dir_step4/orthologous_pairs.txt
 !references/cnidarian_orthologs/broccoli_AcerSpis_only/dir_step4/orthologous_pairs.txt
