@@ -10,3 +10,10 @@ references/cnidarian_orthologs/broccoli*/dir_step4/orthologous_pairs.txt
 !references/cnidarian_orthologs/broccoli_AcerSpis_only/dir_step4/orthologous_pairs.txt
 references/cnidarian_orthologs/broccoli*/dir_step2/hits.tsv*
 references/cnidarian_orthologs/broccoli*/dir_step2/phylomes.tsv*
+
+references/cnidarian_marker_genes/output/combined_markers/combined_PdamRG_*
+references/cnidarian_marker_genes/output/*/*_PdamRG_Markers_pairs.csv
+references/cnidarian_marker_genes/output/Kevin_Pdam_combined_markers.csv
+references/cnidarian_marker_genes/combined_cnidarian_markers_full.csv
+references/cnidarian_marker_genes/output/orthologous_pairs_modified.txt
+code/scRNA_markers_files/figure-gfm/alluvial-8.png

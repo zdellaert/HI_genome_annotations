@@ -851,6 +851,7 @@ write.csv(broc_pairs_clean, file.path(markers_dir, "/output/orthologous_pairs_mo
 
 ```{r alluvial, message=FALSE, warning=FALSE}
 broc_pairs_clean <-  data.table::fread(file.path(markers_dir, "/output/orthologous_pairs_modified.txt"), header=T)
+markers_all_annot <- read.csv(file.path(markers_dir, "/combined_cnidarian_markers_full.csv"))
 
 for (i in 1:length(file_names)){
   species <- sub("_markers","",file_names[i])
