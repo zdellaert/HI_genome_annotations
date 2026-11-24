@@ -120,6 +120,8 @@ stored in this repository.
 | 7 | *Pocillopora damicornis* (Pdam) | [Diao et al. 2025](https://doi.org/10.3389/fmars.2025.1551763) | Supplementary Table S1 |
 | 8 | *Stylophora pistillata* (Spis) | [Levy et al. 2021](https://doi.org/10.1016/j.cell.2021.04.005) | GitHub repository |
 | 9 | *Xenia sp.* (Xesp) | [Hu et al. 2020](https://doi.org/10.1038/s41586-020-2385-7) | Converted [RDS file](https://cmo.carnegiescience.edu/endosymbiosis/data/cluster_markers.RDS) into csv |
+| 10 | *Acropora millepora* (Amil) | [Levy et al. 2025](10.1038/s41586-025-09623-6) | GitHub repository |
+| 11 | *Acropora muricata* (Amur) | [Han et al. 2025](10.1038/s42003-025-08089-6) | Supplementary Data 2 |
 
 ### Additional processing:
 
@@ -179,9 +181,10 @@ file_info %>% dplyr::select(species_name,species_abbreviation,marker_file_name)
     ## 9          Stylophora_pistillata                 Spis
     ## 10                      Xenia_sp                 Xesp
     ## 11            Acropora_millepora                 Amil
-    ## 12             Pocillopora_acuta                 Pacu
-    ## 13             Porites_compressa                 Pcom
-    ## 14            Montipora_capitata                 Mcap
+    ## 12             Acropora_muricata                 Amur
+    ## 13             Pocillopora_acuta                 Pacu
+    ## 14             Porites_compressa                 Pcom
+    ## 15            Montipora_capitata                 Mcap
     ##                                marker_file_name
     ## 1      01-Aiptasia_Cui2023_cluster_markers.xlsx
     ## 2      02-Hydra_Siebert2019_genome_markers.xlsx
@@ -194,9 +197,10 @@ file_info %>% dplyr::select(species_name,species_abbreviation,marker_file_name)
     ## 9                 08-Spis_Levy2021_markers.xlsx
     ## 10                09-Xenia_cluster_markers.xlsx
     ## 11                10-Amil_celltype_markers.xlsx
-    ## 12                                         <NA>
+    ## 12                11-Amur_celltype_markers.xlsx
     ## 13                                         <NA>
     ## 14                                         <NA>
+    ## 15                                         <NA>
 
 # 3. Load and standardize marker gene lists
 
@@ -846,13 +850,68 @@ print(paste0("Processed file: ", name))
 
     ## [1] "Processed file: Amil_markers"
 
+### Amur (Acorpora muricata)
+
+``` r
+name <- file_names[12] #"Processing file: Amur_markers"
+print(paste0("Processing file: ", name))
+```
+
+    ## [1] "Processing file: Amur_markers"
+
+``` r
+clean <- get(name)
+
+#  clean column names with janitor package
+clean <- clean %>%
+  clean_names() #clean column names with janitor package
+
+#  select only markers with *Unwounded* avg_log2FC > 1 in the cluster and *Unwounded* adjusted p-val < 0.05
+clean <- clean %>% filter(unwounded_avg_log2fc>1)  %>% filter(unwounded_p_val_adj < 0.05) 
+
+# identify duplicate genes (pointing to > 1 cluster), and keep only the cluster to which that gene has the highest log2foldchange
+clean <- clean %>% group_by(gene_id) %>%
+                   filter(unwounded_avg_log2fc == max(unwounded_avg_log2fc)) %>%
+                   ungroup()
+
+# select columns with gene and cluster names and rename to standard format
+clean <- clean %>% select(gene_id,sheet) %>%
+                   dplyr::rename(cluster=sheet)
+
+#clean cluster names to replace spaces with underscores
+clean <- clean %>% mutate(cluster = sub(" ", "_", cluster))
+
+# add species source column
+clean$source_sp <- sub("_markers","",name)
+clean$protein_id <- clean$gene_id
+
+# assign the species name to the dataframe
+assign(name,clean)
+head(get(name),5)
+```
+
+    ## # A tibble: 5 × 4
+    ##   gene_id             cluster     source_sp protein_id         
+    ##   <chr>               <chr>       <chr>     <chr>              
+    ## 1 evm.model.Chr12.6   Symbiocytes Amur      evm.model.Chr12.6  
+    ## 2 evm.model.Chr4.674  Symbiocytes Amur      evm.model.Chr4.674 
+    ## 3 evm.model.Chr1.1138 Symbiocytes Amur      evm.model.Chr1.1138
+    ## 4 evm.model.Chr3.417  Symbiocytes Amur      evm.model.Chr3.417 
+    ## 5 evm.model.Chr8.332  Symbiocytes Amur      evm.model.Chr8.332
+
+``` r
+print(paste0("Processed file: ", name))
+```
+
+    ## [1] "Processed file: Amur_markers"
+
 ## 3.3 First-pass a combined marker list
 
 ``` r
-glimpse(lapply(file_names[1:11],get))
+glimpse(lapply(file_names,get))
 ```
 
-    ## List of 11
+    ## List of 12
     ##  $ : tibble [649 × 4] (S3: tbl_df/tbl/data.frame)
     ##   ..$ gene_id   : chr [1:649] "AIPGENE8252" "AIPGENE25192" "AIPGENE5232" "AIPGENE11887" ...
     ##   ..$ cluster   : chr [1:649] "2" "2" "2" "2" ...
@@ -908,9 +967,14 @@ glimpse(lapply(file_names[1:11],get))
     ##   ..$ cluster   : chr [1:15371] "gastrodermis_1" "gastrodermis_1" "gastrodermis_1" "gastrodermis_1" ...
     ##   ..$ source_sp : chr [1:15371] "Amil" "Amil" "Amil" "Amil" ...
     ##   ..$ protein_id: chr [1:15371] "Amil_Amillepora26052" "Amil_Amillepora21884" "Amil_Amillepora10946" "Amil_Amillepora14445" ...
+    ##  $ : tibble [1,017 × 4] (S3: tbl_df/tbl/data.frame)
+    ##   ..$ gene_id   : chr [1:1017] "evm.model.Chr12.6" "evm.model.Chr4.674" "evm.model.Chr1.1138" "evm.model.Chr3.417" ...
+    ##   ..$ cluster   : chr [1:1017] "Symbiocytes" "Symbiocytes" "Symbiocytes" "Symbiocytes" ...
+    ##   ..$ source_sp : chr [1:1017] "Amur" "Amur" "Amur" "Amur" ...
+    ##   ..$ protein_id: chr [1:1017] "evm.model.Chr12.6" "evm.model.Chr4.674" "evm.model.Chr1.1138" "evm.model.Chr3.417" ...
 
 ``` r
-markers_all <- bind_rows(lapply(file_names[1:11],get))
+markers_all <- bind_rows(lapply(file_names,get))
 ```
 
 **Note:** Diao et al Pdam markers report only unadjusted p-values; Spis
@@ -979,6 +1043,9 @@ wget https://cmo.carnegiescience.edu/endosymbiosis/data/id2symbol.txt
 # 10 - A. millepora - download key used by Grau-Bove et al 2025 to compare to Refseq IDs
 wget https://raw.githubusercontent.com/sebepedroslab/oculina-coral-sc-atlas/refs/heads/master/data/reference/Amil_Genes_ncbi_dataset.tsv
 
+# 11 - A. muricata - download genome assembly preprint key for original "evm" gene IDs to match Refseq IDs
+wget https://assets-eu.researchsquare.com/files/rs-9352493/v1/3f7379b55e3fce8c4e24fd83.xlsx # sheet 2 of this (S2.1_Am_gene annotation) saved as csv -- called 11-Amur_annot.csv
+
 gunzip *
 
 mv aiptasia_genome.gff3 01-Edia_annot.gff3
@@ -1045,6 +1112,18 @@ Amil_annot_names <- read_delim(paste0(markers_dir, "/cnidarian_sc_marker_lists/a
    
 colnames(Amil_annot_names) = c("old_ID", "protein_id", "mRNA_id", "annotation")
 Amil_annot_names$old_ID <- str_replace_all(Amil_annot_names$old_ID, "-RA", "")
+
+## 11 - Amur
+Amur_annot_names <- read_delim(paste0(markers_dir, "/cnidarian_sc_marker_lists/annotation_files/",file_info$gene_annotation_file_name[12]),trim_ws = TRUE) %>% select(gene_id,NCBI_protein_ID)
+
+# remove prefixes such as .1 and .2 from the end of certain gene ids to match the evm ids
+Amur_annot_names <- Amur_annot_names %>% mutate(gene_id=
+                                                  paste(str_split_i(gene_id,"\\.",1),
+                                                         str_split_i(gene_id,"\\.",2),
+                                                         str_split_i(gene_id,"\\.",3),
+                                                        str_split_i(gene_id,"\\.",4),
+                                                        sep="."))
+
 
 # remove all the large gtf objects 
 rm(list = ls(pattern = "_annot$"))
@@ -1168,6 +1247,15 @@ for (i in 1:length(marker_files)){
     ## [3] "XP_029179328.2 XP_029179335.2"                                             
     ## [1] "Amil_markers matches of gene id to broccoli protein names:"
     ## [1] 0
+    ## [1] "Amur_markers marker gene format:"
+    ## [1] "evm.model.Chr12.6"    "evm.model.Chr4.674"   "evm.model.Chr1.1138" 
+    ## [4] "evm.model.Chr3.417"   "evm.model.Chr8.332"   "evm.model.Chr10.1157"
+    ## [1] "Amur_markers fasta format:"
+    ## [1] "XP_067056449.1 XP_067056450.1"               
+    ## [2] "XP_067058083.1 XP_067058084.1 XP_067055809.1"
+    ## [3] "XP_067016878.1 XP_067016879.1"               
+    ## [1] "Amur_markers matches of gene id to broccoli protein names:"
+    ## [1] 0
 
 ### Two-fold cleaning
 
@@ -1247,6 +1335,16 @@ Xesp_markers <- Xesp_markers %>% mutate(protein_id = str_replace_all(gene_id, "-
 
 # 11 - Amil
 Amil_markers <- Amil_markers %>% select(-protein_id) %>% left_join(Amil_annot_names, by=c("gene_id"="old_ID")) %>%                 
+                                 select(gene_id,cluster,source_sp,protein_id) %>% filter(!is.na(protein_id))
+
+# 12 - Amur
+
+# 15 rows have weird IDs where there are two ids concatenated -- evm.model.Chr6.198_evm.model.Chr6.199 is evm.model.Chr6.198_evm in the key
+# so we just need to replace any _evm*** with _evm
+
+Amur_markers <- Amur_markers %>% mutate(gene_id = str_replace(gene_id, "_evm\\.model.*$","_evm"))
+
+Amur_markers <- Amur_markers %>% select(-protein_id) %>% left_join(Amur_annot_names) %>%  dplyr::rename(protein_id=NCBI_protein_ID) %>% 
                                  select(gene_id,cluster,source_sp,protein_id) %>% filter(!is.na(protein_id))
 ```
 
@@ -1335,6 +1433,12 @@ for (i in 1:length(marker_files)){
     ## [1] 5004
     ## [1] "Amil_markers matches of gene id to *unclassified* broccoli protein names:"
     ## [1] 10
+    ## [1] "Amur_markers number of unique gene ids in marker list:"
+    ## [1] 1003
+    ## [1] "Amur_markers matches of gene id to broccoli protein names:"
+    ## [1] 1002
+    ## [1] "Amur_markers matches of gene id to *unclassified* broccoli protein names:"
+    ## [1] 0
 
 ## 4.4 Join to standardized cluster names (manually standardized by me, csv key provided)
 
@@ -1348,7 +1452,7 @@ for (name in file_names) {
          envir = .GlobalEnv)
 }
 
-markers_all_annot <- bind_rows(lapply(file_names[1:11],get))
+markers_all_annot <- bind_rows(lapply(file_names,get))
 ```
 
 ## 4.5 Achieved a *better* combined marker list!
@@ -1357,7 +1461,7 @@ markers_all_annot <- bind_rows(lapply(file_names[1:11],get))
 glimpse(markers_all_annot)
 ```
 
-    ## Rows: 61,823
+    ## Rows: 62,840
     ## Columns: 5
     ## $ gene_id           <chr> "AIPGENE8252", "AIPGENE25192", "AIPGENE5232", "AIPGE…
     ## $ cluster           <chr> "2", "2", "2", "2", "3", "3", "3", "4", "4", "4", "4…
@@ -1380,6 +1484,7 @@ write.csv(broc_pairs_clean, file.path(markers_dir, "/output/orthologous_pairs_mo
 
 ``` r
 broc_pairs_clean <-  data.table::fread(file.path(markers_dir, "/output/orthologous_pairs_modified.txt"), header=T)
+markers_all_annot <- read.csv(file.path(markers_dir, "/combined_cnidarian_markers_full.csv"))
 
 for (i in 1:length(file_names)){
   species <- sub("_markers","",file_names[i])
@@ -1437,7 +1542,7 @@ ggsave(paste0(markers_dir, "/output/combined_markers/","combined_",file_names[i]
 }
 ```
 
-![](scRNA_markers_files/figure-gfm/alluvial-1.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-2.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-3.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-4.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-5.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-6.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-7.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-8.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-9.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-10.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-11.png)<!-- -->
+![](scRNA_markers_files/figure-gfm/alluvial-1.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-2.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-3.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-4.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-5.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-6.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-7.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-8.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-9.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-10.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-11.png)<!-- -->![](scRNA_markers_files/figure-gfm/alluvial-12.png)<!-- -->
 
 ## 5.2 Generate ortholog marker gene tables for my focal species
 
@@ -1465,5 +1570,5 @@ Kevin_all <- combined_PdamRG_markers %>%
     filter(grepl("Montipora",protein_id_spB)|
              grepl("Porites",protein_id_spB) | 
            grepl("Pocillopora",protein_id_spB)) 
-write.csv(Kevin_all,paste0(markers_dir, "/output/",paste0("Kevin_Pdam_combined_",file_names[i]),".csv"))
+write.csv(Kevin_all,paste0(markers_dir, "/output/","Kevin_Pdam_combined_markers.csv"))
 ```

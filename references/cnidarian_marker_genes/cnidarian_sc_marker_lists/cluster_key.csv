@@ -275,3 +275,14 @@ Amil,immune_macrophage_like_1,immune
 Amil,immune_macrophage_like_2,immune
 Amil,immune_like,immune
 Amil,germline_oocytes,germline
+Amur,Symbiocytes,gastrodermis_symbiont_containing
+Amur,Calicoblasts,calicoblast
+Amur,Cnidocytes,cnidocyte
+Amur,Digestive_filaments,digestive_filaments
+Amur,Epidermis,epidermis
+Amur,Gastrodermis,gastrodermis
+Amur,Gland_cells,gland
+Amur,Immune_cells,immune
+Amur,Muscle_cells,muscle
+Amur,Neurons,neuron
+Amur,Progenitors,progenitors
