@@ -238,7 +238,7 @@ python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -phylogenies 'ml' -ext
 ### Step 3. Load in results from ortholog analyses
 
 ```{r}
-broc_pairs <- data.table::fread("../references/cnidarian_orthologs/broccoli_wAcropora//dir_step4/orthologous_pairs.txt", header=F)
+broc_pairs <- data.table::fread("../references/cnidarian_orthologs/broccoli_wAcropora/dir_step4/orthologous_pairs.txt", header=F)
 colnames(broc_pairs) <- c("Gene_spA","Gene_spB")
 ```
 
@@ -261,7 +261,8 @@ broc_pairs_3sp <- broc_pairs %>%
   ) %>%
   # remove rows that don't contain genes from our three species
   filter(!is.na(species_A), !is.na(species_B)) %>%
-  select(Gene_spA, species_A, Gene_spB, species_B)
+  select(Gene_spA, species_A, Gene_spB, species_B) %>%
+  arrange(Gene_spA) %>% distinct() 
 ```
 
 ### Step 5. Construct high-confidence orthogroups from Broccoli Step 4 pairwise analysis 
@@ -411,7 +412,7 @@ Biomin_broc <- Biomin_Spis %>%
     left_join(broc_pairs, by = c("blasted_protein_in_stylophora"="Gene_spA")) %>%
     bind_rows(
       Biomin_Spis %>% left_join(broc_pairs, by = c("blasted_protein_in_stylophora"="Gene_spB")) %>%
-        dplyr::rename(Gene_spB = Gene_spA))
+        dplyr::rename(Gene_spB = Gene_spA)) %>% arrange(blasted_protein_in_stylophora, Gene_spB)
 ```
 
 ```{r}
@@ -536,7 +537,7 @@ stress_broc <- stress_genes_final %>%
     left_join(broc_pairs, by = c("protein_id"="Gene_spA")) %>%
     bind_rows(
       stress_genes_final %>% left_join(broc_pairs, by = c("protein_id"="Gene_spB")) %>%
-        dplyr::rename(Gene_spB = Gene_spA))
+        dplyr::rename(Gene_spB = Gene_spA)) %>% arrange(response_type, gene_id, species_gene_ID, Gene_spB)
 ```
 
 Species-specific lists for species:
@@ -568,7 +569,7 @@ stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Pcomp$gene_id,] %>% 
 stress_genes_man[!stress_genes_man$gene_id %in% stress_broc_Mcap$gene_id,] %>% arrange(gene_id)
 ```
 
-### Draft: Adding additional genes to heat stress list based on swissprot annotations
+#### Draft: Adding additional genes to heat stress list based on swissprot annotations
 
 ```{r}
 Pcomp_SwissP <- read.delim("../annotation/Porites_compressa_HIv1_Swissprot_GO.tsv")
