@@ -821,6 +821,11 @@ clean <- clean %>%
 #  select only markers with avg_log2FC > 1 in the cluster
 clean <- clean %>% filter(avg_log2fc>1) %>% filter(p_val_adj<0.05) 
 
+# identify duplicate genes (pointing to > 1 cluster), and keep only the cluster to which that gene has the highest log2foldchange
+clean <- clean %>% group_by(gene) %>%
+                   filter(avg_log2fc == max(avg_log2fc)) %>%
+                   ungroup()
+
 # select columns with gene and cluster names and rename to standard format
 clean <- clean %>% select(gene,focus_node) %>%
                    dplyr::rename(gene_id=gene) %>%
@@ -841,8 +846,8 @@ head(get(name),5)
     ## 1 Amil_Amillepora26052 gastrodermis_1 Amil      Amil_Amillepora26052
     ## 2 Amil_Amillepora21884 gastrodermis_1 Amil      Amil_Amillepora21884
     ## 3 Amil_Amillepora10946 gastrodermis_1 Amil      Amil_Amillepora10946
-    ## 4 Amil_Amillepora14445 gastrodermis_1 Amil      Amil_Amillepora14445
-    ## 5 Amil_Amillepora12321 gastrodermis_1 Amil      Amil_Amillepora12321
+    ## 4 Amil_Amillepora12321 gastrodermis_1 Amil      Amil_Amillepora12321
+    ## 5 Amil_Amillepora23199 gastrodermis_1 Amil      Amil_Amillepora23199
 
 ``` r
 print(paste0("Processed file: ", name))
@@ -962,11 +967,11 @@ glimpse(lapply(file_names,get))
     ##   ..$ cluster   : chr [1:965] "1" "1" "1" "1" ...
     ##   ..$ source_sp : chr [1:965] "Xesp" "Xesp" "Xesp" "Xesp" ...
     ##   ..$ protein_id: chr [1:965] "Xe-006061" "Xe-006047" "Common central domain of tyrosinase-1" "Xe-014936" ...
-    ##  $ : tibble [15,371 × 4] (S3: tbl_df/tbl/data.frame)
-    ##   ..$ gene_id   : chr [1:15371] "Amil_Amillepora26052" "Amil_Amillepora21884" "Amil_Amillepora10946" "Amil_Amillepora14445" ...
-    ##   ..$ cluster   : chr [1:15371] "gastrodermis_1" "gastrodermis_1" "gastrodermis_1" "gastrodermis_1" ...
-    ##   ..$ source_sp : chr [1:15371] "Amil" "Amil" "Amil" "Amil" ...
-    ##   ..$ protein_id: chr [1:15371] "Amil_Amillepora26052" "Amil_Amillepora21884" "Amil_Amillepora10946" "Amil_Amillepora14445" ...
+    ##  $ : tibble [8,684 × 4] (S3: tbl_df/tbl/data.frame)
+    ##   ..$ gene_id   : chr [1:8684] "Amil_Amillepora26052" "Amil_Amillepora21884" "Amil_Amillepora10946" "Amil_Amillepora12321" ...
+    ##   ..$ cluster   : chr [1:8684] "gastrodermis_1" "gastrodermis_1" "gastrodermis_1" "gastrodermis_1" ...
+    ##   ..$ source_sp : chr [1:8684] "Amil" "Amil" "Amil" "Amil" ...
+    ##   ..$ protein_id: chr [1:8684] "Amil_Amillepora26052" "Amil_Amillepora21884" "Amil_Amillepora10946" "Amil_Amillepora12321" ...
     ##  $ : tibble [1,017 × 4] (S3: tbl_df/tbl/data.frame)
     ##   ..$ gene_id   : chr [1:1017] "evm.model.Chr12.6" "evm.model.Chr4.674" "evm.model.Chr1.1138" "evm.model.Chr3.417" ...
     ##   ..$ cluster   : chr [1:1017] "Symbiocytes" "Symbiocytes" "Symbiocytes" "Symbiocytes" ...
@@ -1240,7 +1245,7 @@ for (i in 1:length(marker_files)){
     ## [1] 0
     ## [1] "Amil_markers marker gene format:"
     ## [1] "Amil_Amillepora26052" "Amil_Amillepora21884" "Amil_Amillepora10946"
-    ## [4] "Amil_Amillepora14445" "Amil_Amillepora12321" "Amil_Amillepora23199"
+    ## [4] "Amil_Amillepora12321" "Amil_Amillepora23199" "Amil_Amillepora10945"
     ## [1] "Amil_markers fasta format:"
     ## [1] "XP_044164386.1"                                                            
     ## [2] "XP_029192641.2 XP_029192647.2 XP_029192648.2 XP_029192568.2 XP_029192569.2"
@@ -1461,7 +1466,7 @@ markers_all_annot <- bind_rows(lapply(file_names,get))
 glimpse(markers_all_annot)
 ```
 
-    ## Rows: 62,840
+    ## Rows: 58,850
     ## Columns: 5
     ## $ gene_id           <chr> "AIPGENE8252", "AIPGENE25192", "AIPGENE5232", "AIPGE…
     ## $ cluster           <chr> "2", "2", "2", "2", "3", "3", "3", "4", "4", "4", "4…

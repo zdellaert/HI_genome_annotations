@@ -541,6 +541,11 @@ clean <- clean %>%
 #  select only markers with avg_log2FC > 1 in the cluster
 clean <- clean %>% filter(avg_log2fc>1) %>% filter(p_val_adj<0.05) 
 
+# identify duplicate genes (pointing to > 1 cluster), and keep only the cluster to which that gene has the highest log2foldchange
+clean <- clean %>% group_by(gene) %>%
+                   filter(avg_log2fc == max(avg_log2fc)) %>%
+                   ungroup()
+
 # select columns with gene and cluster names and rename to standard format
 clean <- clean %>% select(gene,focus_node) %>%
                    dplyr::rename(gene_id=gene) %>%
