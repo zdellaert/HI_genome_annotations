@@ -238,7 +238,7 @@ python ~/broccoli.py -dir ../../cnidarian_protein_fastas/ -phylogenies 'ml' -ext
 ### Step 3. Load in results from ortholog analyses
 
 ```{r}
-broc_pairs <- data.table::fread("../references/cnidarian_orthologs/broccoli_wAcropora/dir_step4/orthologous_pairs.txt", header=F)
+broc_pairs <- data.table::fread("../references/cnidarian_orthologs/broccoli/dir_step4/orthologous_pairs.txt", header=F)
 colnames(broc_pairs) <- c("Gene_spA","Gene_spB")
 ```
 
